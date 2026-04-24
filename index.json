@@ -1,0 +1,43 @@
+{
+  "version": "1.0",
+  "registry": "KOPPA Package Registry",
+  "updated": "2026-04-24",
+  "packages": {
+    "koppa-http": {
+      "version": "1.0.0",
+      "description": "Extended HTTP client — multipart, cookies, redirects",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-http",
+      "tags": ["http", "web", "network"],
+      "license": "MIT",
+      "downloads": 0
+    },
+    "koppa-recon": {
+      "version": "1.1.0",
+      "description": "Full recon suite — subdomain enum, WHOIS, Shodan-style scan",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-recon",
+      "tags": ["recon", "osint", "dns"],
+      "license": "MIT",
+      "downloads": 0
+    },
+    "koppa-wordlist": {
+      "version": "1.0.0",
+      "description": "Bundled wordlists for brute-force and fuzzing",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-wordlist",
+      "tags": ["wordlist", "bruteforce", "fuzzing"],
+      "license": "MIT",
+      "downloads": 0
+    },
+    "koppa-report": {
+      "version": "1.0.0",
+      "description": "Generate HTML/JSON pentest reports from scan results",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-report",
+      "tags": ["report", "output", "html"],
+      "license": "MIT",
+      "downloads": 0
+    }
+  }
+}

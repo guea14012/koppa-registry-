@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KOPPA Package Registry</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a12; --bg2: #12122a; --border: #2a2a5a;
+      --green: #00ff41; --cyan: #00e5ff; --yellow: #ffe600;
+      --pink: #ff2d78; --purple: #b44aff; --white: #e8e8e8; --muted: #666688;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--white);
+      font-family: 'Press Start 2P', monospace; font-size: 8px; line-height: 2;
+    }
+    body::after {
+      content: ''; pointer-events: none; position: fixed; inset: 0; z-index: 9999;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.15) 2px, rgba(0,0,0,.15) 4px);
+    }
+
+    /* Nav */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 24px; border-bottom: 4px solid var(--cyan);
+      background: var(--bg); position: sticky; top: 0; z-index: 100; gap: 12px; flex-wrap: wrap;
+    }
+    .logo { color: var(--cyan); font-size: 12px; letter-spacing: 3px; text-shadow: 0 0 8px var(--cyan), 2px 2px 0 var(--purple); }
+    .logo span { color: var(--pink); }
+    nav a { color: var(--muted); text-decoration: none; font-size: 7px; margin-left: 16px; }
+    nav a:hover { color: var(--yellow); }
+
+    /* Hero */
+    .hero { text-align: center; padding: 40px 24px 32px; max-width: 700px; margin: 0 auto; }
+    .hero h1 { font-size: 16px; color: var(--yellow); text-shadow: 2px 2px 0 #664400; margin-bottom: 12px; }
+    .hero p { color: var(--muted); font-size: 7px; margin-bottom: 24px; line-height: 2.5; }
+
+    /* Search */
+    .search-wrap { max-width: 560px; margin: 0 auto 12px; display: flex; gap: 0; }
+    .search-wrap input {
+      flex: 1; background: #000; border: 4px solid var(--cyan); border-right: none;
+      padding: 10px 14px; color: var(--green); font-family: 'Press Start 2P', monospace;
+      font-size: 8px; outline: none;
+    }
+    .search-wrap input::placeholder { color: var(--muted); }
+    .search-wrap button {
+      background: var(--cyan); border: 4px solid var(--cyan); padding: 10px 16px;
+      font-family: 'Press Start 2P', monospace; font-size: 8px; color: #000; cursor: pointer;
+    }
+    .search-wrap button:hover { background: var(--yellow); border-color: var(--yellow); }
+
+    .stats { font-size: 7px; color: var(--muted); margin-bottom: 8px; }
+    .stats span { color: var(--cyan); }
+
+    /* Install strip */
+    .install-strip {
+      display: flex; align-items: center; gap: 10px; background: #000;
+      border: 4px solid var(--green); padding: 10px 14px;
+      max-width: 420px; margin: 0 auto 0;
+    }
+    .install-strip::before { content: '$ '; color: var(--green); }
+    .install-strip code { color: var(--green); font-size: 8px; flex: 1; }
+    .copy-btn {
+      background: var(--green); color: #000; border: none;
+      padding: 4px 8px; font-family: 'Press Start 2P', monospace; font-size: 6px; cursor: pointer;
+    }
+    .copy-btn:hover { background: var(--yellow); }
+
+    /* Main layout */
+    .container { max-width: 1000px; margin: 40px auto; padding: 0 24px; }
+    .layout { display: grid; grid-template-columns: 220px 1fr; gap: 20px; }
+    @media (max-width: 700px) { .layout { grid-template-columns: 1fr; } }
+
+    /* Sidebar */
+    .sidebar { display: flex; flex-direction: column; gap: 12px; }
+    .sidebar-box { background: var(--bg2); border: 4px solid var(--border); padding: 14px; }
+    .sidebar-box h3 { font-size: 8px; color: var(--yellow); margin-bottom: 10px; }
+    .tag-list { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag {
+      padding: 3px 8px; border: 2px solid var(--border); font-size: 6px;
+      color: var(--muted); cursor: pointer;
+    }
+    .tag:hover, .tag.active { border-color: var(--cyan); color: var(--cyan); }
+
+    /* Package list */
+    #pkg-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .pkg-card {
+      background: var(--bg2); border: 4px solid var(--border); padding: 16px;
+      cursor: pointer; transition: border-color .1s; box-shadow: 4px 4px 0 #080816;
+    }
+    .pkg-card:hover { border-color: var(--cyan); }
+    .pkg-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+    .pkg-name { font-size: 10px; color: var(--cyan); }
+    .pkg-version { font-size: 7px; color: var(--yellow); background: var(--bg); border: 2px solid var(--yellow); padding: 2px 6px; }
+    .pkg-desc { color: var(--muted); font-size: 7px; margin-bottom: 10px; line-height: 2; }
+    .pkg-meta { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .pkg-tag { font-size: 6px; color: var(--purple); border: 2px solid var(--purple); padding: 2px 6px; }
+    .pkg-author { font-size: 6px; color: var(--muted); }
+
+    .pkg-install {
+      display: flex; align-items: center; gap: 8px; background: #000;
+      border: 2px solid var(--green); padding: 6px 10px; margin-top: 10px;
+    }
+    .pkg-install::before { content: '$ '; color: var(--green); font-size: 7px; }
+    .pkg-install code { color: var(--green); font-size: 7px; }
+
+    /* Empty state */
+    .empty { text-align: center; padding: 48px; color: var(--muted); }
+    .empty p:first-child { font-size: 10px; margin-bottom: 12px; }
+
+    /* Footer */
+    footer { border-top: 4px solid var(--border); text-align: center; padding: 24px; color: var(--muted); font-size: 6px; margin-top: 48px; line-height: 2.8; }
+    footer a { color: var(--cyan); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="logo">KOP<span>PKG</span></span>
+  <div>
+    <a href="https://guea14012.github.io/koppa-lang">KOPPA LANG</a>
+    <a href="https://github.com/guea14012/koppa-registry">GITHUB</a>
+    <a href="https://guea14012.github.io/koppa-lang#download">INSTALL KOPPA</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>KOPPA PACKAGE REGISTRY</h1>
+  <p>Find and install KOPPA modules with one command.<br>Community packages for security, recon, and automation.</p>
+
+  <div class="search-wrap">
+    <input type="text" id="search" placeholder="Search packages..." oninput="filterPkgs(this.value)" />
+    <button onclick="filterPkgs(document.getElementById('search').value)">SEARCH</button>
+  </div>
+  <p class="stats" id="stats">Loading...</p>
+
+  <div class="install-strip">
+    <code id="install-cmd">koppa pkg install &lt;name&gt;</code>
+    <button class="copy-btn" onclick="copyCmd()">COPY</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="layout">
+    <div class="sidebar">
+      <div class="sidebar-box">
+        <h3>FILTER BY TAG</h3>
+        <div class="tag-list" id="tag-list"></div>
+      </div>
+      <div class="sidebar-box">
+        <h3>SUBMIT A PACKAGE</h3>
+        <p style="color:var(--muted);font-size:6px;line-height:2.5">
+          Create a GitHub repo with a <span style="color:var(--cyan)">koppa.json</span> and a <span style="color:var(--cyan)">.kop</span> entry file.<br><br>
+          Then open a PR to add it to the registry index.
+        </p>
+        <a href="https://github.com/guea14012/koppa-registry" style="display:block;margin-top:10px;padding:6px;background:var(--purple);color:#000;text-align:center;font-size:7px;text-decoration:none;">SUBMIT →</a>
+      </div>
+    </div>
+
+    <div>
+      <div id="pkg-list"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  KOPPA PACKAGE REGISTRY &nbsp;·&nbsp;
+  <a href="https://guea14012.github.io/koppa-lang">koppalang.co</a> &nbsp;·&nbsp;
+  <a href="https://github.com/guea14012/koppa-registry">GitHub</a>
+  <br>BUILT FOR SECURITY PROFESSIONALS
+</footer>
+
+<script>
+const REGISTRY_URL = '../index.json'
+let allPkgs = {}
+let activeTag = null
+
+async function loadRegistry() {
+  try {
+    const r = await fetch(REGISTRY_URL)
+    const data = await r.json()
+    allPkgs = data.packages || {}
+    document.getElementById('stats').innerHTML =
+      `<span>${Object.keys(allPkgs).length}</span> packages available`
+    buildTags()
+    renderPkgs(allPkgs)
+  } catch(e) {
+    document.getElementById('stats').textContent = 'Failed to load registry'
+  }
+}
+
+function buildTags() {
+  const tags = new Set()
+  Object.values(allPkgs).forEach(p => (p.tags || []).forEach(t => tags.add(t)))
+  const el = document.getElementById('tag-list')
+  el.innerHTML = ''
+  tags.forEach(tag => {
+    const btn = document.createElement('div')
+    btn.className = 'tag'
+    btn.textContent = tag
+    btn.onclick = () => {
+      activeTag = activeTag === tag ? null : tag
+      document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'))
+      if (activeTag) btn.classList.add('active')
+      filterPkgs(document.getElementById('search').value)
+    }
+    el.appendChild(btn)
+  })
+}
+
+function renderPkgs(pkgs) {
+  const el = document.getElementById('pkg-list')
+  const entries = Object.entries(pkgs)
+  if (!entries.length) {
+    el.innerHTML = '<div class="empty"><p>NO PACKAGES FOUND</p><p style="font-size:7px">Try a different search term</p></div>'
+    return
+  }
+  el.innerHTML = entries.map(([name, p]) => `
+    <div class="pkg-card">
+      <div class="pkg-header">
+        <span class="pkg-name">${name}</span>
+        <span class="pkg-version">v${p.version}</span>
+      </div>
+      <p class="pkg-desc">${p.description}</p>
+      <div class="pkg-meta">
+        ${(p.tags||[]).map(t => `<span class="pkg-tag">${t}</span>`).join('')}
+        <span class="pkg-author">by ${p.author}</span>
+        <span class="pkg-author">${p.license}</span>
+      </div>
+      <div class="pkg-install"><code>koppa pkg install ${name}</code></div>
+    </div>
+  `).join('')
+}
+
+function filterPkgs(q) {
+  q = q.toLowerCase()
+  const filtered = Object.fromEntries(
+    Object.entries(allPkgs).filter(([name, p]) => {
+      const matchQ = !q || name.toLowerCase().includes(q) || (p.description||'').toLowerCase().includes(q)
+      const matchTag = !activeTag || (p.tags||[]).includes(activeTag)
+      return matchQ && matchTag
+    })
+  )
+  renderPkgs(filtered)
+}
+
+function copyCmd() {
+  navigator.clipboard.writeText('koppa pkg install <name>').then(() => {
+    const b = document.querySelector('.copy-btn')
+    b.textContent = 'OK!'
+    setTimeout(() => b.textContent = 'COPY', 1500)
+  })
+}
+
+loadRegistry()
+</script>
+</body>
+</html>
