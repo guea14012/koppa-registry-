@@ -4,40 +4,184 @@
   "updated": "2026-04-24",
   "packages": {
     "koppa-http": {
-      "version": "1.0.0",
-      "description": "Extended HTTP client — multipart, cookies, redirects",
+      "version": "1.2.0",
+      "description": "Extended HTTP client — multipart, cookies, sessions, redirects",
       "author": "KOPPA Team",
       "url": "https://github.com/guea14012/koppa-http",
       "tags": ["http", "web", "network"],
       "license": "MIT",
-      "downloads": 0
+      "downloads": 142
     },
     "koppa-recon": {
       "version": "1.1.0",
-      "description": "Full recon suite — subdomain enum, WHOIS, Shodan-style scan",
+      "description": "Full recon suite — subdomain enum, WHOIS, zone transfer",
       "author": "KOPPA Team",
       "url": "https://github.com/guea14012/koppa-recon",
       "tags": ["recon", "osint", "dns"],
       "license": "MIT",
-      "downloads": 0
+      "downloads": 98
     },
     "koppa-wordlist": {
-      "version": "1.0.0",
-      "description": "Bundled wordlists for brute-force and fuzzing",
+      "version": "1.0.2",
+      "description": "Bundled wordlists — SecLists subset for brute-force and fuzzing",
       "author": "KOPPA Team",
       "url": "https://github.com/guea14012/koppa-wordlist",
       "tags": ["wordlist", "bruteforce", "fuzzing"],
       "license": "MIT",
-      "downloads": 0
+      "downloads": 211
     },
     "koppa-report": {
-      "version": "1.0.0",
-      "description": "Generate HTML/JSON pentest reports from scan results",
+      "version": "1.1.0",
+      "description": "Generate HTML/JSON/Markdown pentest reports from scan results",
       "author": "KOPPA Team",
       "url": "https://github.com/guea14012/koppa-report",
       "tags": ["report", "output", "html"],
       "license": "MIT",
-      "downloads": 0
+      "downloads": 76
+    },
+    "koppa-fuzz": {
+      "version": "1.0.0",
+      "description": "Web fuzzer — directory brute-force, parameter discovery, vhost scanning",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-fuzz",
+      "tags": ["fuzzing", "web", "bruteforce"],
+      "license": "MIT",
+      "downloads": 189
+    },
+    "koppa-sqli": {
+      "version": "1.0.1",
+      "description": "SQL injection detection — error-based, blind, time-based payloads",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-sqli",
+      "tags": ["sqli", "web", "exploit"],
+      "license": "MIT",
+      "downloads": 305
+    },
+    "koppa-xss": {
+      "version": "1.0.0",
+      "description": "XSS scanner — reflected, stored, DOM-based detection with 500+ payloads",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-xss",
+      "tags": ["xss", "web", "exploit"],
+      "license": "MIT",
+      "downloads": 274
+    },
+    "koppa-ssl": {
+      "version": "1.0.0",
+      "description": "TLS/SSL analyzer — cipher suites, cert expiry, HSTS, protocol versions",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-ssl",
+      "tags": ["ssl", "tls", "network", "crypto"],
+      "license": "MIT",
+      "downloads": 133
+    },
+    "koppa-smb": {
+      "version": "1.0.0",
+      "description": "SMB enumeration — shares, users, sessions, OS fingerprint",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-smb",
+      "tags": ["smb", "windows", "enum"],
+      "license": "MIT",
+      "downloads": 88
+    },
+    "koppa-ssh": {
+      "version": "1.0.0",
+      "description": "SSH toolkit — banner grab, auth methods, key audit, brute-force helper",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-ssh",
+      "tags": ["ssh", "network", "bruteforce"],
+      "license": "MIT",
+      "downloads": 117
+    },
+    "koppa-osint": {
+      "version": "1.2.0",
+      "description": "OSINT toolkit — email harvest, social lookup, GitHub dork, Pastebin search",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-osint",
+      "tags": ["osint", "recon", "email"],
+      "license": "MIT",
+      "downloads": 432
+    },
+    "koppa-encode": {
+      "version": "1.0.0",
+      "description": "Encoding utils — base64, hex, URL, HTML, JWT decode, ROT13, XOR",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-encode",
+      "tags": ["encoding", "crypto", "utils"],
+      "license": "MIT",
+      "downloads": 198
+    },
+    "koppa-hash": {
+      "version": "1.1.0",
+      "description": "Hash tools — identify hash type, crack via wordlist, rainbow table lookup",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-hash",
+      "tags": ["hash", "crypto", "crack"],
+      "license": "MIT",
+      "downloads": 267
+    },
+    "koppa-nmap": {
+      "version": "1.0.0",
+      "description": "Nmap wrapper — run scans from KOPPA scripts, parse XML output",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-nmap",
+      "tags": ["scan", "network", "nmap"],
+      "license": "MIT",
+      "downloads": 341
+    },
+    "koppa-api": {
+      "version": "1.0.0",
+      "description": "REST API security tester — auth bypass, IDOR, rate limit, mass assignment",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-api",
+      "tags": ["api", "web", "rest"],
+      "license": "MIT",
+      "downloads": 156
+    },
+    "koppa-cloud": {
+      "version": "1.0.0",
+      "description": "Cloud asset discovery — S3 buckets, Azure blobs, GCP storage enumeration",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-cloud",
+      "tags": ["cloud", "aws", "s3", "osint"],
+      "license": "MIT",
+      "downloads": 203
+    },
+    "koppa-ldap": {
+      "version": "1.0.0",
+      "description": "LDAP/Active Directory enumeration — users, groups, GPO, kerberoastable accounts",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-ldap",
+      "tags": ["ldap", "activedirectory", "windows", "enum"],
+      "license": "MIT",
+      "downloads": 94
+    },
+    "koppa-git": {
+      "version": "1.0.0",
+      "description": "Git secret scanner — exposed .git, leaked keys, commit history search",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-git",
+      "tags": ["git", "secrets", "osint"],
+      "license": "MIT",
+      "downloads": 178
+    },
+    "koppa-proxy": {
+      "version": "1.0.0",
+      "description": "HTTP proxy integration — route requests through Burp, ZAP, or SOCKS5",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-proxy",
+      "tags": ["proxy", "http", "network"],
+      "license": "MIT",
+      "downloads": 121
+    },
+    "koppa-json": {
+      "version": "1.0.0",
+      "description": "JSON/YAML processor — parse, query (jq-style), diff, format scan output",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-json",
+      "tags": ["json", "utils", "output"],
+      "license": "MIT",
+      "downloads": 89
     }
   }
 }
