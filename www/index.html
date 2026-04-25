@@ -4,173 +4,272 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KOPPA Package Registry</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0a0a12; --bg2: #12122a; --border: #2a2a5a;
-      --green: #00ff41; --cyan: #00e5ff; --yellow: #ffe600;
-      --pink: #ff2d78; --purple: #b44aff; --white: #e8e8e8; --muted: #666688;
+      --bg:      #0a0a1a;
+      --card:    #1a1a2e;
+      --border:  #3a3a5e;
+      --border2: #2a2a4e;
+      --gold:    #ffcc00;
+      --cyan:    #00ffcc;
+      --pink:    #ff66aa;
+      --purple:  #aa66ff;
+      --text:    #e0e0ff;
+      --muted:   #8080a0;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: var(--bg); color: var(--white);
-      font-family: 'Press Start 2P', monospace; font-size: 8px; line-height: 2;
-    }
-    body::after {
-      content: ''; pointer-events: none; position: fixed; inset: 0; z-index: 9999;
-      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.15) 2px, rgba(0,0,0,.15) 4px);
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
     }
 
-    /* Nav */
+    /* ── Nav ── */
     nav {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 24px; border-bottom: 4px solid var(--cyan);
-      background: var(--bg); position: sticky; top: 0; z-index: 100; gap: 12px; flex-wrap: wrap;
+      padding: 0 32px; height: 60px;
+      background: var(--card); border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
     }
-    .logo { color: var(--cyan); font-size: 12px; letter-spacing: 3px; text-shadow: 0 0 8px var(--cyan), 2px 2px 0 var(--purple); }
-    .logo span { color: var(--pink); }
-    nav a { color: var(--muted); text-decoration: none; font-size: 7px; margin-left: 16px; }
-    nav a:hover { color: var(--yellow); }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 18px; font-weight: 700; letter-spacing: 1px; text-decoration: none;
+      color: var(--gold);
+    }
+    .nav-logo .badge {
+      font-size: 10px; background: var(--border2); color: var(--cyan);
+      padding: 2px 8px; border-radius: 4px; font-weight: 500; letter-spacing: 0;
+    }
+    nav .links { display: flex; align-items: center; gap: 24px; }
+    nav a { color: var(--muted); text-decoration: none; font-size: 13px; transition: color .15s; }
+    nav a:hover { color: var(--text); }
+    nav a.active { color: var(--cyan); }
 
-    /* Hero */
-    .hero { text-align: center; padding: 40px 24px 32px; max-width: 700px; margin: 0 auto; }
-    .hero h1 { font-size: 16px; color: var(--yellow); text-shadow: 2px 2px 0 #664400; margin-bottom: 12px; }
-    .hero p { color: var(--muted); font-size: 7px; margin-bottom: 24px; line-height: 2.5; }
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(180deg, #12122a 0%, var(--bg) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 56px 32px 48px; text-align: center;
+    }
+    .hero h1 {
+      font-size: 36px; font-weight: 800; letter-spacing: -0.5px;
+      color: var(--text); margin-bottom: 12px;
+    }
+    .hero h1 span { color: var(--gold); }
+    .hero p { color: var(--muted); font-size: 15px; max-width: 520px; margin: 0 auto 32px; }
+    .stats { display: flex; justify-content: center; gap: 32px; margin-bottom: 32px; }
+    .stat-item { text-align: center; }
+    .stat-num { font-size: 28px; font-weight: 700; color: var(--cyan); display: block; }
+    .stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
 
-    /* Search */
-    .search-wrap { max-width: 560px; margin: 0 auto 12px; display: flex; gap: 0; }
+    /* ── Search ── */
+    .search-wrap {
+      max-width: 560px; margin: 0 auto;
+      display: flex; border: 1px solid var(--border); background: var(--card);
+      border-radius: 6px; overflow: hidden;
+      transition: border-color .15s;
+    }
+    .search-wrap:focus-within { border-color: var(--cyan); }
     .search-wrap input {
-      flex: 1; background: #000; border: 4px solid var(--cyan); border-right: none;
-      padding: 10px 14px; color: var(--green); font-family: 'Press Start 2P', monospace;
-      font-size: 8px; outline: none;
+      flex: 1; padding: 12px 16px; background: transparent;
+      border: none; color: var(--text); font-size: 14px; outline: none;
     }
     .search-wrap input::placeholder { color: var(--muted); }
     .search-wrap button {
-      background: var(--cyan); border: 4px solid var(--cyan); padding: 10px 16px;
-      font-family: 'Press Start 2P', monospace; font-size: 8px; color: #000; cursor: pointer;
+      padding: 12px 20px; background: var(--gold); border: none;
+      color: #0a0a1a; font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: background .15s;
     }
-    .search-wrap button:hover { background: var(--yellow); border-color: var(--yellow); }
+    .search-wrap button:hover { background: #ffe033; }
 
-    .stats { font-size: 7px; color: var(--muted); margin-bottom: 8px; }
-    .stats span { color: var(--cyan); }
+    /* ── Layout ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+    .layout { display: grid; grid-template-columns: 220px 1fr; gap: 24px; }
+    @media (max-width: 720px) { .layout { grid-template-columns: 1fr; } .hero h1 { font-size: 26px; } }
 
-    /* Install strip */
-    .install-strip {
-      display: flex; align-items: center; gap: 10px; background: #000;
-      border: 4px solid var(--green); padding: 10px 14px;
-      max-width: 420px; margin: 0 auto 0;
+    /* ── Sidebar ── */
+    .sidebar { display: flex; flex-direction: column; gap: 16px; }
+    .sidebar-box {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 16px;
     }
-    .install-strip::before { content: '$ '; color: var(--green); }
-    .install-strip code { color: var(--green); font-size: 8px; flex: 1; }
-    .copy-btn {
-      background: var(--green); color: #000; border: none;
-      padding: 4px 8px; font-family: 'Press Start 2P', monospace; font-size: 6px; cursor: pointer;
+    .sidebar-box h3 {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--muted); margin-bottom: 12px;
     }
-    .copy-btn:hover { background: var(--yellow); }
-
-    /* Main layout */
-    .container { max-width: 1000px; margin: 40px auto; padding: 0 24px; }
-    .layout { display: grid; grid-template-columns: 220px 1fr; gap: 20px; }
-    @media (max-width: 700px) { .layout { grid-template-columns: 1fr; } }
-
-    /* Sidebar */
-    .sidebar { display: flex; flex-direction: column; gap: 12px; }
-    .sidebar-box { background: var(--bg2); border: 4px solid var(--border); padding: 14px; }
-    .sidebar-box h3 { font-size: 8px; color: var(--yellow); margin-bottom: 10px; }
-    .tag-list { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
     .tag {
-      padding: 3px 8px; border: 2px solid var(--border); font-size: 6px;
-      color: var(--muted); cursor: pointer;
+      padding: 4px 10px; border-radius: 4px; font-size: 12px;
+      background: var(--border2); color: var(--muted);
+      cursor: pointer; border: 1px solid transparent; transition: all .15s;
     }
-    .tag:hover, .tag.active { border-color: var(--cyan); color: var(--cyan); }
+    .tag:hover { border-color: var(--cyan); color: var(--cyan); }
+    .tag.active { background: rgba(0,255,204,.1); border-color: var(--cyan); color: var(--cyan); }
+    .submit-box p { color: var(--muted); font-size: 12px; line-height: 1.7; margin-bottom: 12px; }
+    .submit-box code {
+      display: inline-block; background: var(--border2); color: var(--cyan);
+      padding: 1px 6px; border-radius: 3px; font-size: 11px; font-family: monospace;
+    }
+    .btn-submit {
+      display: block; width: 100%; padding: 8px;
+      background: var(--purple); color: #fff; text-align: center;
+      border-radius: 4px; text-decoration: none; font-size: 13px;
+      font-weight: 600; margin-top: 12px; transition: opacity .15s;
+    }
+    .btn-submit:hover { opacity: .85; }
 
-    /* Package list */
+    /* ── Pkg list ── */
     #pkg-list { display: flex; flex-direction: column; gap: 10px; }
+    .results-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .results-count { font-size: 13px; color: var(--muted); }
 
     .pkg-card {
-      background: var(--bg2); border: 4px solid var(--border); padding: 16px;
-      cursor: pointer; transition: border-color .1s; box-shadow: 4px 4px 0 #080816;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 20px 24px;
+      cursor: pointer; transition: border-color .15s, box-shadow .15s;
+      text-decoration: none; display: block; color: inherit;
     }
-    .pkg-card:hover { border-color: var(--cyan); }
-    .pkg-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
-    .pkg-name { font-size: 10px; color: var(--cyan); }
-    .pkg-version { font-size: 7px; color: var(--yellow); background: var(--bg); border: 2px solid var(--yellow); padding: 2px 6px; }
-    .pkg-desc { color: var(--muted); font-size: 7px; margin-bottom: 10px; line-height: 2; }
-    .pkg-meta { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-    .pkg-tag { font-size: 6px; color: var(--purple); border: 2px solid var(--purple); padding: 2px 6px; }
-    .pkg-author { font-size: 6px; color: var(--muted); }
-
+    .pkg-card:hover { border-color: var(--cyan); box-shadow: 0 0 0 1px var(--cyan); }
+    .pkg-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 6px; flex-wrap: wrap; }
+    .pkg-name { font-size: 16px; font-weight: 700; color: var(--cyan); }
+    .pkg-version {
+      font-size: 11px; background: rgba(0,255,204,.08);
+      color: var(--cyan); border: 1px solid rgba(0,255,204,.3);
+      padding: 2px 8px; border-radius: 4px; font-family: monospace; white-space: nowrap;
+    }
+    .pkg-desc { color: var(--muted); font-size: 13px; margin-bottom: 12px; }
+    .pkg-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    .pkg-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .pkg-tag {
+      font-size: 11px; padding: 2px 8px; border-radius: 4px;
+      background: var(--border2); color: var(--purple);
+    }
+    .pkg-meta { display: flex; align-items: center; gap: 16px; }
+    .pkg-author { font-size: 12px; color: var(--muted); }
+    .pkg-dl { font-size: 12px; color: var(--muted); }
     .pkg-install {
-      display: flex; align-items: center; gap: 8px; background: #000;
-      border: 2px solid var(--green); padding: 6px 10px; margin-top: 10px;
+      display: flex; align-items: center; gap: 8px;
+      background: var(--bg); border: 1px solid var(--border2);
+      border-radius: 4px; padding: 6px 12px; margin-top: 10px;
     }
-    .pkg-install::before { content: '$ '; color: var(--green); font-size: 7px; }
-    .pkg-install code { color: var(--green); font-size: 7px; }
+    .pkg-install::before { content: '$'; color: var(--gold); font-family: monospace; font-size: 13px; }
+    .pkg-install code { color: var(--gold); font-family: monospace; font-size: 12px; }
 
-    /* Empty state */
-    .empty { text-align: center; padding: 48px; color: var(--muted); }
-    .empty p:first-child { font-size: 10px; margin-bottom: 12px; }
+    /* ── Severity badges ── */
+    .sev { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+    .sev-critical { background: rgba(255,68,68,.15); color: #ff4444; }
+    .sev-high { background: rgba(255,102,0,.15); color: #ff6600; }
+    .sev-medium { background: rgba(255,204,0,.15); color: var(--gold); }
+    .sev-low { background: rgba(0,255,204,.1); color: var(--cyan); }
 
-    /* Footer */
-    footer { border-top: 4px solid var(--border); text-align: center; padding: 24px; color: var(--muted); font-size: 6px; margin-top: 48px; line-height: 2.8; }
+    /* ── Empty ── */
+    .empty { text-align: center; padding: 64px 24px; color: var(--muted); }
+    .empty .icon { font-size: 40px; margin-bottom: 16px; opacity: .4; }
+    .empty h3 { font-size: 16px; color: var(--text); margin-bottom: 8px; }
+    .empty p { font-size: 13px; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border); text-align: center;
+      padding: 24px; color: var(--muted); font-size: 12px;
+      margin-top: 48px; line-height: 2;
+    }
     footer a { color: var(--cyan); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Install pill ── */
+    .hero-install {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 6px; padding: 8px 16px; font-family: monospace;
+      font-size: 13px; color: var(--gold); margin-top: 16px;
+    }
+    .hero-install::before { content: '$'; color: var(--muted); }
   </style>
 </head>
 <body>
 
 <nav>
-  <span class="logo">KOP<span>PKG</span></span>
-  <div>
-    <a href="https://guea14012.github.io/koppa-lang">KOPPA LANG</a>
-    <a href="https://github.com/guea14012/koppa-registry">GITHUB</a>
-    <a href="https://guea14012.github.io/koppa-lang#download">INSTALL KOPPA</a>
+  <a class="nav-logo" href="#">
+    KOPP<span style="color:var(--cyan)">PKG</span>
+    <span class="badge">v1.0</span>
+  </a>
+  <div class="links">
+    <a href="#pkg-list" class="active">Packages</a>
+    <a href="https://guea14012.github.io/koppa-lang">Docs</a>
+    <a href="https://github.com/guea14012/koppa-registry-">GitHub</a>
+    <a href="https://github.com/guea14012/koppa-lang">KOPPA Lang</a>
   </div>
 </nav>
 
 <div class="hero">
-  <h1>KOPPA PACKAGE REGISTRY</h1>
-  <p>Find and install KOPPA modules with one command.<br>Community packages for security, recon, and automation.</p>
+  <h1>KOPPA <span>Package</span> Registry</h1>
+  <p>Find and install community KOPPA modules for security testing, recon, and automation.</p>
+
+  <div class="stats">
+    <div class="stat-item">
+      <span class="stat-num" id="total-count">—</span>
+      <span class="stat-label">Packages</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" id="total-dl">—</span>
+      <span class="stat-label">Downloads</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num" id="total-tags">—</span>
+      <span class="stat-label">Categories</span>
+    </div>
+  </div>
 
   <div class="search-wrap">
-    <input type="text" id="search" placeholder="Search packages..." oninput="filterPkgs(this.value)" />
-    <button onclick="filterPkgs(document.getElementById('search').value)">SEARCH</button>
+    <input type="text" id="search" placeholder="Search packages…" oninput="filterPkgs()" />
+    <button onclick="filterPkgs()">Search</button>
   </div>
-  <p class="stats" id="stats">Loading...</p>
 
-  <div class="install-strip">
-    <code id="install-cmd">koppa pkg install &lt;name&gt;</code>
-    <button class="copy-btn" onclick="copyCmd()">COPY</button>
-  </div>
+  <div class="hero-install">koppa pkg install &lt;name&gt;</div>
 </div>
 
 <div class="container">
   <div class="layout">
+
     <div class="sidebar">
       <div class="sidebar-box">
-        <h3>FILTER BY TAG</h3>
-        <div class="tag-list" id="tag-list"></div>
+        <h3>Filter by Category</h3>
+        <div class="tag-cloud" id="tag-list"></div>
       </div>
-      <div class="sidebar-box">
-        <h3>SUBMIT A PACKAGE</h3>
-        <p style="color:var(--muted);font-size:6px;line-height:2.5">
-          Create a GitHub repo with a <span style="color:var(--cyan)">koppa.json</span> and a <span style="color:var(--cyan)">.kop</span> entry file.<br><br>
-          Then open a PR to add it to the registry index.
+      <div class="sidebar-box submit-box">
+        <h3>Publish a Package</h3>
+        <p>
+          Create a GitHub repo with a <code>koppa.json</code> manifest and a <code>.kop</code> entry file.
+          Open a PR to add it to the registry.
         </p>
-        <a href="https://github.com/guea14012/koppa-registry" style="display:block;margin-top:10px;padding:6px;background:var(--purple);color:#000;text-align:center;font-size:7px;text-decoration:none;">SUBMIT →</a>
+        <a href="https://github.com/guea14012/koppa-registry-" class="btn-submit">Submit Package →</a>
       </div>
     </div>
 
     <div>
+      <div class="results-header">
+        <span class="results-count" id="results-count"></span>
+      </div>
       <div id="pkg-list"></div>
     </div>
+
   </div>
 </div>
 
 <footer>
-  KOPPA PACKAGE REGISTRY &nbsp;·&nbsp;
-  <a href="https://guea14012.github.io/koppa-lang">koppalang.co</a> &nbsp;·&nbsp;
-  <a href="https://github.com/guea14012/koppa-registry">GitHub</a>
-  <br>BUILT FOR SECURITY PROFESSIONALS
+  <div>
+    <strong style="color:var(--text)">KOPPA Package Registry</strong> &nbsp;·&nbsp;
+    <a href="https://guea14012.github.io/koppa-lang">koppalang.co</a> &nbsp;·&nbsp;
+    <a href="https://github.com/guea14012/koppa-registry-">GitHub</a> &nbsp;·&nbsp;
+    <a href="https://pypi.org/project/koppa-lang/">PyPI</a>
+  </div>
+  <div style="margin-top:4px">Built for security professionals · MIT License</div>
 </footer>
 
 <script>
@@ -183,63 +282,42 @@ async function loadRegistry() {
     const r = await fetch(REGISTRY_URL)
     const data = await r.json()
     allPkgs = data.packages || {}
-    document.getElementById('stats').innerHTML =
-      `<span>${Object.keys(allPkgs).length}</span> packages available`
-    buildTags()
+    const tags = new Set(Object.values(allPkgs).flatMap(p => p.tags || []))
+    const totalDl = Object.values(allPkgs).reduce((s, p) => s + (p.downloads || 0), 0)
+    document.getElementById('total-count').textContent = Object.keys(allPkgs).length
+    document.getElementById('total-dl').textContent = totalDl.toLocaleString()
+    document.getElementById('total-tags').textContent = tags.size
+    buildTags(tags)
     renderPkgs(allPkgs)
   } catch(e) {
-    document.getElementById('stats').textContent = 'Failed to load registry'
+    document.getElementById('pkg-list').innerHTML = `
+      <div class="empty">
+        <div class="icon">📦</div>
+        <h3>Failed to load registry</h3>
+        <p>Could not fetch package index. Please try again later.</p>
+      </div>`
   }
 }
 
-function buildTags() {
-  const tags = new Set()
-  Object.values(allPkgs).forEach(p => (p.tags || []).forEach(t => tags.add(t)))
+function buildTags(tags) {
   const el = document.getElementById('tag-list')
-  el.innerHTML = ''
-  tags.forEach(tag => {
-    const btn = document.createElement('div')
-    btn.className = 'tag'
-    btn.textContent = tag
-    btn.onclick = () => {
-      activeTag = activeTag === tag ? null : tag
-      document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'))
-      if (activeTag) btn.classList.add('active')
-      filterPkgs(document.getElementById('search').value)
-    }
-    el.appendChild(btn)
-  })
+  el.innerHTML = [...tags].sort().map(tag =>
+    `<div class="tag" onclick="toggleTag('${tag}',this)">${tag}</div>`
+  ).join('')
 }
 
-function renderPkgs(pkgs) {
-  const el = document.getElementById('pkg-list')
-  const entries = Object.entries(pkgs)
-  if (!entries.length) {
-    el.innerHTML = '<div class="empty"><p>NO PACKAGES FOUND</p><p style="font-size:7px">Try a different search term</p></div>'
-    return
-  }
-  el.innerHTML = entries.map(([name, p]) => `
-    <div class="pkg-card">
-      <div class="pkg-header">
-        <span class="pkg-name">${name}</span>
-        <span class="pkg-version">v${p.version}</span>
-      </div>
-      <p class="pkg-desc">${p.description}</p>
-      <div class="pkg-meta">
-        ${(p.tags||[]).map(t => `<span class="pkg-tag">${t}</span>`).join('')}
-        <span class="pkg-author">by ${p.author}</span>
-        <span class="pkg-author">${p.license}</span>
-      </div>
-      <div class="pkg-install"><code>koppa pkg install ${name}</code></div>
-    </div>
-  `).join('')
+function toggleTag(tag, el) {
+  activeTag = activeTag === tag ? null : tag
+  document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'))
+  if (activeTag) el.classList.add('active')
+  filterPkgs()
 }
 
-function filterPkgs(q) {
-  q = q.toLowerCase()
+function filterPkgs() {
+  const q = document.getElementById('search').value.toLowerCase()
   const filtered = Object.fromEntries(
     Object.entries(allPkgs).filter(([name, p]) => {
-      const matchQ = !q || name.toLowerCase().includes(q) || (p.description||'').toLowerCase().includes(q)
+      const matchQ = !q || name.toLowerCase().includes(q) || (p.description||'').toLowerCase().includes(q) || (p.tags||[]).some(t => t.includes(q))
       const matchTag = !activeTag || (p.tags||[]).includes(activeTag)
       return matchQ && matchTag
     })
@@ -247,12 +325,41 @@ function filterPkgs(q) {
   renderPkgs(filtered)
 }
 
-function copyCmd() {
-  navigator.clipboard.writeText('koppa pkg install <name>').then(() => {
-    const b = document.querySelector('.copy-btn')
-    b.textContent = 'OK!'
-    setTimeout(() => b.textContent = 'COPY', 1500)
-  })
+function renderPkgs(pkgs) {
+  const entries = Object.entries(pkgs)
+  const count = document.getElementById('results-count')
+  count.textContent = `${entries.length} package${entries.length !== 1 ? 's' : ''}`
+
+  if (!entries.length) {
+    document.getElementById('pkg-list').innerHTML = `
+      <div class="empty">
+        <div class="icon">🔍</div>
+        <h3>No packages found</h3>
+        <p>Try a different search term or clear the filter.</p>
+      </div>`
+    return
+  }
+
+  document.getElementById('pkg-list').innerHTML = entries.map(([name, p]) => `
+    <div class="pkg-card">
+      <div class="pkg-top">
+        <span class="pkg-name">${name}</span>
+        <span class="pkg-version">v${p.version}</span>
+      </div>
+      <p class="pkg-desc">${p.description}</p>
+      <div class="pkg-footer">
+        <div class="pkg-tags">
+          ${(p.tags||[]).map(t => `<span class="pkg-tag">${t}</span>`).join('')}
+        </div>
+        <div class="pkg-meta">
+          <span class="pkg-author">by ${p.author}</span>
+          <span class="pkg-dl">↓ ${(p.downloads||0).toLocaleString()}</span>
+          <span class="pkg-author">${p.license||'MIT'}</span>
+        </div>
+      </div>
+      <div class="pkg-install"><code>koppa pkg install ${name}</code></div>
+    </div>
+  `).join('')
 }
 
 loadRegistry()
