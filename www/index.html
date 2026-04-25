@@ -277,16 +277,27 @@ const REGISTRY_URL = 'https://raw.githubusercontent.com/guea14012/koppa-registry
 let allPkgs = {}
 let activeTag = null
 
+const MAIN_CATS = new Set(['web','network','osint','crypto','exploit','forensics','cloud','mobile','database','ctf','blueteam','utils','windows','redteam','wireless'])
+
 async function loadRegistry() {
   try {
     const r = await fetch(REGISTRY_URL)
     const data = await r.json()
     allPkgs = data.packages || {}
+
     const tags = new Set(Object.values(allPkgs).flatMap(p => p.tags || []))
     const totalDl = Object.values(allPkgs).reduce((s, p) => s + (p.downloads || 0), 0)
+
+    // Count main categories (not all unique tags)
+    const mainCats = new Set()
+    Object.values(allPkgs).forEach(p => {
+      const cat = (p.tags || []).find(t => MAIN_CATS.has(t))
+      if (cat) mainCats.add(cat)
+    })
+
     document.getElementById('total-count').textContent = Object.keys(allPkgs).length
     document.getElementById('total-dl').textContent = totalDl.toLocaleString()
-    document.getElementById('total-tags').textContent = tags.size
+    document.getElementById('total-tags').textContent = mainCats.size
     buildTags(tags)
     renderPkgs(allPkgs)
   } catch(e) {
