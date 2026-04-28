@@ -174,6 +174,34 @@
     .empty h3 { font-size: 16px; color: var(--text); margin-bottom: 8px; }
     .empty p { font-size: 13px; }
 
+    /* ── Pagination ── */
+    .pagination-wrap {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px; margin-top: 24px; padding-top: 20px;
+      border-top: 1px solid var(--border2);
+    }
+    .pagination-info { font-size: 12px; color: var(--muted); }
+    .pagination-controls { display: flex; align-items: center; gap: 4px; }
+    .page-btn {
+      min-width: 34px; height: 34px; padding: 0 8px;
+      background: var(--card); border: 1px solid var(--border2);
+      color: var(--muted); border-radius: 6px; cursor: pointer;
+      font-size: 13px; font-weight: 500; transition: all .15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .page-btn:hover:not(:disabled) { border-color: var(--cyan); color: var(--cyan); }
+    .page-btn.active { background: rgba(0,255,204,.12); border-color: var(--cyan); color: var(--cyan); font-weight: 700; }
+    .page-btn:disabled { opacity: .3; cursor: not-allowed; }
+    .page-ellipsis { font-size: 13px; color: var(--muted); padding: 0 4px; }
+    .perpage-wrap { display: flex; align-items: center; gap: 8px; }
+    .perpage-label { font-size: 12px; color: var(--muted); white-space: nowrap; }
+    .perpage-select {
+      background: var(--card); border: 1px solid var(--border2);
+      color: var(--text); border-radius: 6px; padding: 6px 10px;
+      font-size: 13px; cursor: pointer; outline: none; transition: border-color .15s;
+    }
+    .perpage-select:focus { border-color: var(--cyan); }
+
     /* ── Modal ── */
     .modal-backdrop {
       display: none; position: fixed; inset: 0; z-index: 200;
@@ -374,8 +402,20 @@
     <div>
       <div class="results-header">
         <span class="results-count" id="results-count"></span>
+        <div class="perpage-wrap">
+          <span class="perpage-label">Show</span>
+          <select class="perpage-select" id="perpage-select" onchange="setPerPage(this.value)">
+            <option value="10">10</option>
+            <option value="20" selected>20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="200">200</option>
+          </select>
+          <span class="perpage-label">per page</span>
+        </div>
       </div>
       <div id="pkg-list"></div>
+      <div id="pagination"></div>
     </div>
 
   </div>
@@ -395,6 +435,9 @@
 const REGISTRY_URL = 'https://raw.githubusercontent.com/guea14012/koppa-registry-/main/index.json'
 let allPkgs = {}
 let activeTag = null
+let filteredEntries = []
+let currentPage = 1
+let perPage = 20
 
 const MAIN_CATS = new Set(['web','network','osint','crypto','exploit','forensics','cloud','mobile','database','ctf','blueteam','utils','windows','redteam','wireless'])
 
@@ -407,7 +450,6 @@ async function loadRegistry() {
     const tags = new Set(Object.values(allPkgs).flatMap(p => p.tags || []))
     const totalDl = Object.values(allPkgs).reduce((s, p) => s + (p.downloads || 0), 0)
 
-    // Count main categories (not all unique tags)
     const mainCats = new Set()
     Object.values(allPkgs).forEach(p => {
       const cat = (p.tags || []).find(t => MAIN_CATS.has(t))
@@ -418,7 +460,7 @@ async function loadRegistry() {
     document.getElementById('total-dl').textContent = totalDl.toLocaleString()
     document.getElementById('total-tags').textContent = mainCats.size
     buildTags(tags)
-    renderPkgs(allPkgs)
+    filterPkgs()
   } catch(e) {
     document.getElementById('pkg-list').innerHTML = `
       <div class="empty">
@@ -445,32 +487,61 @@ function toggleTag(tag, el) {
 
 function filterPkgs() {
   const q = document.getElementById('search').value.toLowerCase()
-  const filtered = Object.fromEntries(
-    Object.entries(allPkgs).filter(([name, p]) => {
-      const matchQ = !q || name.toLowerCase().includes(q) || (p.description||'').toLowerCase().includes(q) || (p.tags||[]).some(t => t.includes(q))
-      const matchTag = !activeTag || (p.tags||[]).includes(activeTag)
-      return matchQ && matchTag
-    })
-  )
-  renderPkgs(filtered)
+  filteredEntries = Object.entries(allPkgs).filter(([name, p]) => {
+    const matchQ = !q || name.toLowerCase().includes(q) ||
+      (p.description||'').toLowerCase().includes(q) ||
+      (p.tags||[]).some(t => t.includes(q))
+    const matchTag = !activeTag || (p.tags||[]).includes(activeTag)
+    return matchQ && matchTag
+  })
+  currentPage = 1
+  renderPage()
 }
 
-function renderPkgs(pkgs) {
-  const entries = Object.entries(pkgs)
-  const count = document.getElementById('results-count')
-  count.textContent = `${entries.length} package${entries.length !== 1 ? 's' : ''}`
+function setPerPage(val) {
+  perPage = parseInt(val)
+  currentPage = 1
+  renderPage()
+}
 
-  if (!entries.length) {
+function setPage(n) {
+  const totalPages = Math.ceil(filteredEntries.length / perPage)
+  if (n < 1 || n > totalPages) return
+  currentPage = n
+  renderPage()
+  document.getElementById('pkg-list').scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+function renderPage() {
+  const total = filteredEntries.length
+  const totalPages = Math.max(1, Math.ceil(total / perPage))
+  if (currentPage > totalPages) currentPage = totalPages
+
+  const start = (currentPage - 1) * perPage
+  const end   = Math.min(start + perPage, total)
+  const pageEntries = filteredEntries.slice(start, end)
+
+  // Results count label
+  const countEl = document.getElementById('results-count')
+  if (total === 0) {
+    countEl.textContent = '0 packages'
+  } else {
+    countEl.textContent = `Showing ${start + 1}–${end} of ${total} package${total !== 1 ? 's' : ''}`
+  }
+
+  // Package cards
+  if (!total) {
     document.getElementById('pkg-list').innerHTML = `
       <div class="empty">
         <div class="icon">🔍</div>
         <h3>No packages found</h3>
         <p>Try a different search term or clear the filter.</p>
       </div>`
+    document.getElementById('pagination').innerHTML = ''
     return
   }
 
-  document.getElementById('pkg-list').innerHTML = entries.map(([name, p]) => `
+  document.getElementById('pkg-list').innerHTML = pageEntries.map(([name, p]) => `
     <div class="pkg-card" onclick="openModal('${name}')">
       <div class="pkg-top">
         <span class="pkg-name">${name}</span>
@@ -489,6 +560,51 @@ function renderPkgs(pkgs) {
       <div class="pkg-install"><code>koppa pkg install ${name}</code></div>
     </div>
   `).join('')
+
+  renderPagination(totalPages)
+}
+
+function renderPagination(totalPages) {
+  if (totalPages <= 1) {
+    document.getElementById('pagination').innerHTML = ''
+    return
+  }
+
+  const cur = currentPage
+
+  // Build page number list with ellipsis
+  function pageNums(cur, total) {
+    if (total <= 7) return Array.from({length: total}, (_, i) => i + 1)
+    const pages = []
+    pages.push(1)
+    if (cur > 3) pages.push('...')
+    for (let i = Math.max(2, cur - 1); i <= Math.min(total - 1, cur + 1); i++) pages.push(i)
+    if (cur < total - 2) pages.push('...')
+    pages.push(total)
+    return pages
+  }
+
+  const nums = pageNums(cur, totalPages)
+  const start = (cur - 1) * perPage + 1
+  const end   = Math.min(cur * perPage, filteredEntries.length)
+
+  const btns = nums.map(n =>
+    n === '...'
+      ? `<span class="page-ellipsis">…</span>`
+      : `<button class="page-btn${n === cur ? ' active' : ''}" onclick="setPage(${n})">${n}</button>`
+  ).join('')
+
+  document.getElementById('pagination').innerHTML = `
+    <div class="pagination-wrap">
+      <span class="pagination-info">${start}–${end} of ${filteredEntries.length}</span>
+      <div class="pagination-controls">
+        <button class="page-btn" onclick="setPage(${cur - 1})" ${cur === 1 ? 'disabled' : ''}>&#8592; Prev</button>
+        ${btns}
+        <button class="page-btn" onclick="setPage(${cur + 1})" ${cur === totalPages ? 'disabled' : ''}>Next &#8594;</button>
+      </div>
+      <span class="pagination-info">Page ${cur} of ${totalPages}</span>
+    </div>
+  `
 }
 
 function openModal(name) {
