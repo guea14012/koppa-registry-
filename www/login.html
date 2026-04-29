@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KOPPA Registry — Login</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml"/>
+  <style>
+    :root {
+      --bg:#0a0a1a;--card:#1a1a2e;--border:#3a3a5e;--border2:#2a2a4e;
+      --gold:#ffcc00;--cyan:#00ffcc;--pink:#ff66aa;--purple:#aa66ff;
+      --text:#e0e0ff;--muted:#8080a0;--green:#00ff88;--red:#ff4444;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--text);min-height:100vh;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+      font-size:14px;display:flex;flex-direction:column;align-items:center;
+      justify-content:center;padding:24px}
+    nav{position:fixed;top:0;left:0;right:0;height:52px;background:var(--card);
+      border-bottom:1px solid var(--border);display:flex;align-items:center;
+      padding:0 24px;gap:12px;z-index:10}
+    .nav-logo{font-size:16px;font-weight:700;color:var(--gold);text-decoration:none}
+    nav a{color:var(--muted);text-decoration:none;font-size:13px;margin-left:auto}
+    nav a:hover{color:var(--text)}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+      padding:40px;width:100%;max-width:420px;margin-top:52px}
+    .card-title{font-size:22px;font-weight:700;margin-bottom:6px}
+    .card-sub{color:var(--muted);font-size:13px;margin-bottom:28px}
+    .btn{width:100%;padding:11px;border-radius:6px;font-size:14px;font-weight:600;
+      cursor:pointer;border:none;transition:all .15s;display:flex;align-items:center;
+      justify-content:center;gap:10px;margin-bottom:10px}
+    .btn-github{background:#24292e;color:#fff;border:1px solid #444}
+    .btn-github:hover{background:#2f363d}
+    .btn-primary{background:var(--cyan);color:#0a0a1a}
+    .btn-primary:hover{background:#00e6b8}
+    .btn-secondary{background:transparent;color:var(--text);border:1px solid var(--border2)}
+    .btn-secondary:hover{border-color:var(--cyan);color:var(--cyan)}
+    .divider{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--muted);font-size:12px}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border2)}
+    .form-group{margin-bottom:14px}
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;
+      text-transform:uppercase;letter-spacing:.5px}
+    input{width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--border2);
+      color:var(--text);border-radius:6px;font-size:14px;outline:none;transition:border-color .15s}
+    input:focus{border-color:var(--cyan)}
+    input::placeholder{color:var(--muted)}
+    .msg{padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:14px;display:none}
+    .msg.error{background:rgba(255,68,68,.1);color:var(--red);border:1px solid rgba(255,68,68,.2)}
+    .msg.success{background:rgba(0,255,136,.08);color:var(--green);border:1px solid rgba(0,255,136,.15)}
+    .tab-row{display:flex;gap:4px;margin-bottom:24px}
+    .tab{flex:1;padding:8px;background:transparent;border:1px solid var(--border2);
+      color:var(--muted);border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s}
+    .tab.active{background:rgba(0,255,204,.1);border-color:var(--cyan);color:var(--cyan)}
+    #panel-signup{display:none}
+    .footer-link{text-align:center;margin-top:16px;font-size:12px;color:var(--muted)}
+    .footer-link a{color:var(--cyan);text-decoration:none}
+    .cli-box{background:var(--bg);border:1px solid var(--border2);border-radius:8px;
+      padding:16px;margin-top:20px;display:none}
+    .cli-box h4{font-size:12px;text-transform:uppercase;letter-spacing:1px;
+      color:var(--muted);margin-bottom:10px}
+    .token-display{display:flex;align-items:center;gap:8px}
+    .token-value{flex:1;font-family:monospace;font-size:12px;color:var(--gold);
+      background:var(--card);padding:8px 12px;border-radius:4px;
+      border:1px solid var(--border2);word-break:break-all}
+    .btn-copy-token{padding:8px 14px;background:transparent;border:1px solid var(--border2);
+      color:var(--muted);border-radius:4px;font-size:12px;cursor:pointer;white-space:nowrap}
+    .btn-copy-token:hover{border-color:var(--cyan);color:var(--cyan)}
+    .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.2);
+      border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html">KOPP<span style="color:var(--cyan)">PKG</span></a>
+  <a href="index.html">← Back to Registry</a>
+</nav>
+
+<div class="card">
+  <div class="card-title">Sign in to KOPPA</div>
+  <div class="card-sub">Publish and manage your KOPPA packages</div>
+
+  <button class="btn btn-github" onclick="loginGitHub()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+    </svg>
+    Continue with GitHub
+  </button>
+
+  <div class="divider">or</div>
+
+  <div class="tab-row">
+    <button class="tab active" onclick="switchTab('login', this)">Login</button>
+    <button class="tab" onclick="switchTab('signup', this)">Sign Up</button>
+  </div>
+
+  <div id="msg" class="msg"></div>
+
+  <!-- Login panel -->
+  <div id="panel-login">
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="login-email" placeholder="you@example.com"/>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="login-pass" placeholder="••••••••"
+             onkeydown="if(event.key==='Enter')doLogin()"/>
+    </div>
+    <button class="btn btn-primary" onclick="doLogin()" id="btn-login">Sign In</button>
+    <button class="btn btn-secondary" onclick="doMagicLink()">Email Magic Link</button>
+  </div>
+
+  <!-- Signup panel -->
+  <div id="panel-signup">
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="signup-user" placeholder="koppa_dev"/>
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="signup-email" placeholder="you@example.com"/>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="signup-pass" placeholder="Min 8 characters"
+             onkeydown="if(event.key==='Enter')doSignup()"/>
+    </div>
+    <button class="btn btn-primary" onclick="doSignup()" id="btn-signup">Create Account</button>
+  </div>
+
+  <div class="footer-link">
+    <a href="index.html">Browse packages without account</a>
+  </div>
+
+  <!-- CLI token box (shown after login when ?cli=1) -->
+  <div class="cli-box" id="cli-box">
+    <h4>CLI Token — paste this into your terminal</h4>
+    <div class="token-display">
+      <div class="token-value" id="cli-token-value">Loading…</div>
+      <button class="btn-copy-token" onclick="copyToken()">Copy</button>
+    </div>
+    <p style="color:var(--muted);font-size:12px;margin-top:10px">
+      Run: <code style="color:var(--gold)">koppa pkg login --token &lt;TOKEN&gt;</code>
+    </p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="_config.js"></script>
+<script>
+const isCLI = new URLSearchParams(location.search).get('cli') === '1'
+let db = null
+
+if (isSupabaseConfigured()) {
+  db = supabase.createClient(KOPPA_SUPABASE_URL, KOPPA_SUPABASE_ANON_KEY)
+}
+
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
+  el.classList.add('active')
+  document.getElementById('panel-login').style.display  = tab === 'login'  ? '' : 'none'
+  document.getElementById('panel-signup').style.display = tab === 'signup' ? '' : 'none'
+  clearMsg()
+}
+
+function showMsg(text, type = 'error') {
+  const el = document.getElementById('msg')
+  el.textContent = text
+  el.className = 'msg ' + type
+  el.style.display = 'block'
+}
+function clearMsg() {
+  document.getElementById('msg').style.display = 'none'
+}
+
+async function loginGitHub() {
+  if (!db) { showMsg('Supabase not configured — edit _config.js'); return }
+  const { error } = await db.auth.signInWithOAuth({
+    provider: 'github',
+    options: { redirectTo: location.origin + location.pathname.replace('login.html','') +
+               (isCLI ? 'login.html?cli=1&loggedin=1' : 'profile.html') }
+  })
+  if (error) showMsg(error.message)
+}
+
+async function doLogin() {
+  if (!db) { showMsg('Supabase not configured — edit _config.js'); return }
+  const email = document.getElementById('login-email').value.trim()
+  const pass  = document.getElementById('login-pass').value
+  if (!email || !pass) { showMsg('Email and password required'); return }
+  setLoading('btn-login', true)
+  const { error } = await db.auth.signInWithPassword({ email, password: pass })
+  setLoading('btn-login', false)
+  if (error) { showMsg(error.message); return }
+  await afterLogin()
+}
+
+async function doSignup() {
+  if (!db) { showMsg('Supabase not configured — edit _config.js'); return }
+  const username = document.getElementById('signup-user').value.trim()
+  const email    = document.getElementById('signup-email').value.trim()
+  const pass     = document.getElementById('signup-pass').value
+  if (!username || !email || !pass) { showMsg('All fields required'); return }
+  if (pass.length < 8)  { showMsg('Password must be at least 8 characters'); return }
+  setLoading('btn-signup', true)
+  const { error } = await db.auth.signUp({
+    email, password: pass,
+    options: { data: { user_name: username } }
+  })
+  setLoading('btn-signup', false)
+  if (error) { showMsg(error.message); return }
+  showMsg('Check your email to confirm your account!', 'success')
+}
+
+async function doMagicLink() {
+  if (!db) { showMsg('Supabase not configured — edit _config.js'); return }
+  const email = document.getElementById('login-email').value.trim()
+  if (!email) { showMsg('Enter your email first'); return }
+  const { error } = await db.auth.signInWithOtp({ email })
+  if (error) { showMsg(error.message); return }
+  showMsg('Magic link sent! Check your inbox.', 'success')
+}
+
+async function afterLogin() {
+  const { data: { user } } = await db.auth.getUser()
+  if (!user) return
+  if (isCLI) {
+    await showCLIToken(user)
+  } else {
+    location.href = 'profile.html'
+  }
+}
+
+async function showCLIToken(user) {
+  // Check for existing token
+  let { data: tokens } = await db.from('api_tokens')
+    .select('token').eq('user_id', user.id).limit(1)
+  let token
+  if (tokens && tokens.length > 0) {
+    token = tokens[0].token
+  } else {
+    // Create new token
+    const { data } = await db.from('api_tokens')
+      .insert({ user_id: user.id, name: 'CLI Token' })
+      .select('token').single()
+    token = data?.token
+  }
+  document.getElementById('cli-token-value').textContent = token || 'Error generating token'
+  document.getElementById('cli-box').style.display = 'block'
+  clearMsg()
+  showMsg('Logged in! Copy the token below.', 'success')
+}
+
+async function copyToken() {
+  const val = document.getElementById('cli-token-value').textContent
+  await navigator.clipboard.writeText(val)
+  const b = document.querySelector('.btn-copy-token')
+  b.textContent = 'Copied!'
+  setTimeout(() => b.textContent = 'Copy', 1500)
+}
+
+function setLoading(btnId, loading) {
+  const btn = document.getElementById(btnId)
+  btn.disabled = loading
+  btn.innerHTML = loading
+    ? '<div class="spinner"></div>'
+    : (btnId === 'btn-login' ? 'Sign In' : 'Create Account')
+}
+
+// Check if already logged in (OAuth redirect)
+async function init() {
+  if (!db) return
+  const { data: { session } } = await db.auth.getSession()
+  if (session && (isCLI || location.search.includes('loggedin'))) {
+    await afterLogin()
+  }
+}
+init()
+</script>
+</body>
+</html>

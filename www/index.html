@@ -290,13 +290,27 @@
 <nav>
   <a class="nav-logo" href="#">
     KOPP<span style="color:var(--cyan)">PKG</span>
-    <span class="badge">v1.0</span>
+    <span class="badge">v2.0</span>
   </a>
   <div class="links">
     <a href="#pkg-list" class="active">Packages</a>
     <a href="https://guea14012.github.io/koppa-lang">Docs</a>
     <a href="https://github.com/guea14012/koppa-registry-">GitHub</a>
     <a href="https://github.com/guea14012/koppa-lang">KOPPA Lang</a>
+  </div>
+  <!-- Auth nav (injected by JS) -->
+  <div style="margin-left:auto;display:flex;align-items:center;gap:10px" id="nav-auth">
+    <a href="publish.html" style="font-size:13px;color:var(--cyan);text-decoration:none;font-weight:600">+ Publish</a>
+    <a href="login.html" id="nav-login-btn"
+       style="padding:6px 14px;background:transparent;border:1px solid var(--border2);
+              color:var(--text);border-radius:5px;font-size:13px;font-weight:600;
+              text-decoration:none;transition:border-color .15s"
+       onmouseover="this.style.borderColor='var(--cyan)'"
+       onmouseout="this.style.borderColor='var(--border2)'">Login</a>
+    <a href="profile.html" id="nav-profile-btn"
+       style="display:none;padding:6px 14px;background:rgba(0,255,204,.1);
+              border:1px solid rgba(0,255,204,.3);color:var(--cyan);border-radius:5px;
+              font-size:13px;font-weight:600;text-decoration:none">My Packages</a>
   </div>
 </nav>
 
@@ -648,6 +662,53 @@ document.addEventListener('keydown', e => {
 })
 
 loadRegistry()
+</script>
+
+<!-- Auth layer (Supabase optional — falls back gracefully) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="_config.js"></script>
+<script>
+(async function initAuth() {
+  if (!isSupabaseConfigured()) return
+  const db = supabase.createClient(KOPPA_SUPABASE_URL, KOPPA_SUPABASE_ANON_KEY)
+  const { data: { session } } = await db.auth.getSession()
+
+  if (session) {
+    document.getElementById('nav-login-btn').style.display   = 'none'
+    document.getElementById('nav-profile-btn').style.display = 'inline-flex'
+
+    // Load real package counts from Supabase
+    const { count } = await db.from('packages').select('*', { count: 'exact', head: true })
+    if (count != null) {
+      document.getElementById('total-count').textContent = count
+    }
+
+    // Load real download total
+    const { data: dlData } = await db.from('packages').select('downloads')
+    if (dlData) {
+      const total = dlData.reduce((s, p) => s + (p.downloads || 0), 0)
+      document.getElementById('total-dl').textContent = total.toLocaleString()
+    }
+  }
+
+  // Track downloads when modal copy is clicked (if Supabase configured)
+  const origCopy = window.copyModalCmd
+  window.copyModalCmd = async function() {
+    origCopy()
+    const name = document.getElementById('modal-name').textContent
+    if (!name || !allPkgs[name]) return
+    // Try to record download event via Supabase
+    try {
+      const { data: pkg } = await db.from('packages').select('id').eq('name', name).single()
+      if (pkg?.id) {
+        await db.from('download_events').insert({
+          package_id: pkg.id,
+          version: allPkgs[name]?.version || '1.0.0'
+        })
+      }
+    } catch(_) {}
+  }
+})()
 </script>
 </body>
 </html>

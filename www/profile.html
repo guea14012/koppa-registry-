@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KOPPA Registry — Profile</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml"/>
+  <style>
+    :root {
+      --bg:#0a0a1a;--card:#1a1a2e;--border:#3a3a5e;--border2:#2a2a4e;
+      --gold:#ffcc00;--cyan:#00ffcc;--pink:#ff66aa;--purple:#aa66ff;
+      --text:#e0e0ff;--muted:#8080a0;--green:#00ff88;--red:#ff4444;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+      font-size:14px}
+    nav{display:flex;align-items:center;padding:0 24px;height:52px;
+      background:var(--card);border-bottom:1px solid var(--border);
+      position:sticky;top:0;z-index:10;gap:16px}
+    .nav-logo{font-size:16px;font-weight:700;color:var(--gold);text-decoration:none}
+    .nav-links{display:flex;gap:20px}
+    .nav-links a{color:var(--muted);text-decoration:none;font-size:13px}
+    .nav-links a:hover{color:var(--text)}
+    .nav-actions{margin-left:auto;display:flex;gap:10px;align-items:center}
+    .btn{padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;
+      cursor:pointer;border:none;transition:all .15s;text-decoration:none;
+      display:inline-flex;align-items:center;gap:6px}
+    .btn-primary{background:var(--cyan);color:#0a0a1a}
+    .btn-primary:hover{background:#00e6b8}
+    .btn-danger{background:transparent;color:var(--red);border:1px solid rgba(255,68,68,.3)}
+    .btn-danger:hover{background:rgba(255,68,68,.1)}
+    .btn-sm{padding:5px 12px;font-size:12px}
+    .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border2)}
+    .btn-ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+    .container{max-width:900px;margin:0 auto;padding:32px 24px}
+    .profile-header{display:flex;align-items:center;gap:20px;
+      background:var(--card);border:1px solid var(--border);
+      border-radius:12px;padding:24px;margin-bottom:28px;flex-wrap:wrap}
+    .avatar-lg{width:64px;height:64px;border-radius:50%;background:var(--border2);
+      border:2px solid var(--border)}
+    .profile-info h2{font-size:20px;font-weight:700;margin-bottom:4px}
+    .profile-info p{color:var(--muted);font-size:13px}
+    .profile-stats{display:flex;gap:24px;margin-left:auto}
+    .stat{text-align:center}
+    .stat-n{font-size:20px;font-weight:700;color:var(--cyan);display:block}
+    .stat-l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+    .section-header{display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:14px}
+    .section-title{font-size:15px;font-weight:700}
+    .pkg-list{display:flex;flex-direction:column;gap:10px;margin-bottom:32px}
+    .pkg-row{background:var(--card);border:1px solid var(--border);
+      border-radius:8px;padding:16px 20px;display:flex;
+      align-items:center;gap:12px;flex-wrap:wrap}
+    .pkg-row-name{font-size:15px;font-weight:700;color:var(--cyan);flex:1;min-width:140px}
+    .pkg-row-ver{font-size:11px;background:rgba(0,255,204,.08);color:var(--cyan);
+      border:1px solid rgba(0,255,204,.25);padding:2px 8px;border-radius:4px;
+      font-family:monospace;white-space:nowrap}
+    .pkg-row-desc{color:var(--muted);font-size:13px;flex:2;min-width:200px}
+    .pkg-row-dl{font-size:12px;color:var(--muted);white-space:nowrap}
+    .pkg-row-actions{display:flex;gap:6px}
+    .empty-state{text-align:center;padding:48px 24px;color:var(--muted);
+      background:var(--card);border:1px solid var(--border);border-radius:8px}
+    .empty-state h3{font-size:16px;color:var(--text);margin-bottom:8px}
+    .token-section{background:var(--card);border:1px solid var(--border);
+      border-radius:8px;padding:20px 24px}
+    .token-row{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+    .token-value{flex:1;font-family:monospace;font-size:12px;color:var(--gold);
+      background:var(--bg);padding:10px 14px;border-radius:6px;
+      border:1px solid var(--border2);word-break:break-all;min-width:200px}
+    .token-hint{font-size:12px;color:var(--muted);margin-top:8px}
+    .token-hint code{color:var(--gold);background:rgba(255,204,0,.08);
+      padding:1px 6px;border-radius:3px}
+    .confirm-overlay{display:none;position:fixed;inset:0;
+      background:rgba(0,0,0,.75);backdrop-filter:blur(4px);
+      align-items:center;justify-content:center;z-index:200}
+    .confirm-overlay.open{display:flex}
+    .confirm-box{background:var(--card);border:1px solid var(--border);
+      border-radius:10px;padding:28px;max-width:380px;width:100%;margin:24px}
+    .confirm-box h3{font-size:16px;margin-bottom:10px}
+    .confirm-box p{color:var(--muted);font-size:13px;margin-bottom:20px}
+    .confirm-actions{display:flex;gap:10px}
+    .msg{padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:16px}
+    .msg.success{background:rgba(0,255,136,.08);color:var(--green);
+      border:1px solid rgba(0,255,136,.15)}
+    .msg.error{background:rgba(255,68,68,.1);color:var(--red);
+      border:1px solid rgba(255,68,68,.2)}
+    .spinner{width:16px;height:16px;border:2px solid rgba(10,10,26,.4);
+      border-top-color:#0a0a1a;border-radius:50%;animation:spin .6s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html">KOPP<span style="color:var(--cyan)">PKG</span></a>
+  <div class="nav-links">
+    <a href="index.html">Registry</a>
+    <a href="publish.html" style="color:var(--cyan)">+ Publish</a>
+  </div>
+  <div class="nav-actions">
+    <span id="nav-username" style="color:var(--muted);font-size:13px"></span>
+    <button class="btn btn-ghost btn-sm" onclick="doLogout()">Logout</button>
+  </div>
+</nav>
+
+<div class="container">
+  <div id="msg" class="msg" style="display:none"></div>
+
+  <!-- Profile header -->
+  <div class="profile-header" id="profile-header">
+    <img class="avatar-lg" id="avatar" src="" alt=""/>
+    <div class="profile-info">
+      <h2 id="profile-username">Loading…</h2>
+      <p id="profile-email"></p>
+      <p id="profile-bio" style="margin-top:4px"></p>
+    </div>
+    <div class="profile-stats">
+      <div class="stat">
+        <span class="stat-n" id="stat-pkgs">—</span>
+        <span class="stat-l">Packages</span>
+      </div>
+      <div class="stat">
+        <span class="stat-n" id="stat-dl">—</span>
+        <span class="stat-l">Downloads</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- My packages -->
+  <div class="section-header">
+    <span class="section-title">My Packages</span>
+    <a href="publish.html" class="btn btn-primary btn-sm">+ New Package</a>
+  </div>
+  <div class="pkg-list" id="pkg-list">
+    <div class="empty-state">
+      <div style="font-size:32px;margin-bottom:12px;opacity:.4">📦</div>
+      <h3>Loading…</h3>
+    </div>
+  </div>
+
+  <!-- API Token -->
+  <div class="section-header" style="margin-top:8px">
+    <span class="section-title">API Token</span>
+  </div>
+  <div class="token-section">
+    <p style="color:var(--muted);font-size:13px;margin-bottom:4px">
+      Use this token to publish packages from the CLI without a browser.
+    </p>
+    <div class="token-row">
+      <div class="token-value" id="token-value">Loading…</div>
+      <button class="btn btn-ghost btn-sm" onclick="copyToken()">Copy</button>
+      <button class="btn btn-ghost btn-sm" onclick="regenToken()">Regenerate</button>
+    </div>
+    <p class="token-hint">
+      CLI: <code>koppa pkg login --token &lt;TOKEN&gt;</code>
+    </p>
+  </div>
+</div>
+
+<!-- Confirm delete modal -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <h3 id="confirm-title">Confirm</h3>
+    <p id="confirm-msg"></p>
+    <div class="confirm-actions">
+      <button class="btn btn-danger" id="confirm-ok">Delete</button>
+      <button class="btn btn-ghost" onclick="closeConfirm()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="_config.js"></script>
+<script>
+let db = null, currentUser = null, confirmCb = null
+
+if (isSupabaseConfigured()) {
+  db = supabase.createClient(KOPPA_SUPABASE_URL, KOPPA_SUPABASE_ANON_KEY)
+}
+
+async function init() {
+  if (!db) { location.href = 'login.html'; return }
+  const { data: { session } } = await db.auth.getSession()
+  if (!session) { location.href = 'login.html'; return }
+  currentUser = session.user
+  document.getElementById('nav-username').textContent = currentUser.email
+
+  // Load profile
+  const { data: profile } = await db.from('profiles')
+    .select('username,avatar_url,bio').eq('id', currentUser.id).single()
+  document.getElementById('avatar').src = profile?.avatar_url || ''
+  document.getElementById('profile-username').textContent = profile?.username || currentUser.email
+  document.getElementById('profile-email').textContent = currentUser.email
+  if (profile?.bio) document.getElementById('profile-bio').textContent = profile.bio
+
+  // Load packages
+  const { data: pkgs } = await db.from('packages')
+    .select('id,name,description,latest_version,downloads,tags')
+    .eq('author_id', currentUser.id)
+    .order('created_at', { ascending: false })
+  renderPackages(pkgs || [])
+
+  document.getElementById('stat-pkgs').textContent = (pkgs || []).length
+  document.getElementById('stat-dl').textContent =
+    (pkgs || []).reduce((s, p) => s + (p.downloads || 0), 0).toLocaleString()
+
+  // Load token
+  const { data: tokens } = await db.from('api_tokens')
+    .select('token,id').eq('user_id', currentUser.id).limit(1)
+  if (tokens && tokens.length > 0) {
+    document.getElementById('token-value').textContent = tokens[0].token
+  } else {
+    await createToken()
+  }
+}
+
+function renderPackages(pkgs) {
+  const el = document.getElementById('pkg-list')
+  if (!pkgs.length) {
+    el.innerHTML = `
+      <div class="empty-state">
+        <div style="font-size:32px;margin-bottom:12px;opacity:.4">📦</div>
+        <h3>No packages yet</h3>
+        <p style="margin-bottom:16px">Publish your first KOPPA module.</p>
+        <a href="publish.html" class="btn btn-primary">Publish Package</a>
+      </div>`
+    return
+  }
+  el.innerHTML = pkgs.map(p => `
+    <div class="pkg-row">
+      <span class="pkg-row-name">${p.name}</span>
+      <span class="pkg-row-ver">v${p.latest_version}</span>
+      <span class="pkg-row-desc">${p.description}</span>
+      <span class="pkg-row-dl">↓ ${(p.downloads||0).toLocaleString()}</span>
+      <div class="pkg-row-actions">
+        <a href="publish.html?edit=${encodeURIComponent(p.name)}" class="btn btn-ghost btn-sm">Edit</a>
+        <button class="btn btn-danger btn-sm"
+          onclick="confirmDelete('${p.id}','${p.name}')">Delete</button>
+      </div>
+    </div>`).join('')
+}
+
+async function createToken() {
+  const { data } = await db.from('api_tokens')
+    .insert({ user_id: currentUser.id, name: 'CLI Token' })
+    .select('token').single()
+  if (data) document.getElementById('token-value').textContent = data.token
+}
+
+async function regenToken() {
+  // Delete old, create new
+  await db.from('api_tokens').delete().eq('user_id', currentUser.id)
+  await createToken()
+  showMsg('Token regenerated — old token is now invalid.', 'success')
+}
+
+async function copyToken() {
+  const val = document.getElementById('token-value').textContent
+  await navigator.clipboard.writeText(val)
+  showMsg('Token copied to clipboard!', 'success')
+}
+
+function confirmDelete(pkgId, name) {
+  document.getElementById('confirm-title').textContent = 'Delete Package'
+  document.getElementById('confirm-msg').textContent =
+    `Delete "${name}" permanently? This cannot be undone.`
+  confirmCb = () => deletePackage(pkgId, name)
+  document.getElementById('confirm-ok').onclick = () => { closeConfirm(); confirmCb() }
+  document.getElementById('confirm-overlay').classList.add('open')
+}
+
+function closeConfirm() {
+  document.getElementById('confirm-overlay').classList.remove('open')
+}
+
+async function deletePackage(pkgId, name) {
+  const { error } = await db.from('packages').delete().eq('id', pkgId)
+  if (error) { showMsg('Delete failed: ' + error.message, 'error'); return }
+  showMsg(`"${name}" deleted.`, 'success')
+  setTimeout(() => location.reload(), 1200)
+}
+
+async function doLogout() {
+  await db.auth.signOut()
+  location.href = 'index.html'
+}
+
+function showMsg(text, type) {
+  const el = document.getElementById('msg')
+  el.textContent = text
+  el.className = 'msg ' + type
+  el.style.display = 'block'
+  setTimeout(() => el.style.display = 'none', 4000)
+}
+
+init()
+</script>
+</body>
+</html>
