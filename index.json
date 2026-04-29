@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "registry": "KOPPA Package Registry",
-  "updated": "2026-04-25",
+  "updated": "2026-04-29",
   "packages": {
     "koppa-http": {
       "version": "1.2.0",
@@ -2596,13 +2596,117 @@
       "description": "Email OSINT \u2014 have-i-been-pwned, MX, SPF/DKIM/DMARC check",
       "author": "KOPPA Team",
       "url": "https://github.com/guea14012/koppa-email-osint",
-      "tags": [
-        "email",
-        "osint",
-        "recon"
-      ],
+      "tags": ["email", "osint", "recon"],
       "license": "MIT",
       "downloads": 1440
+    },
+    "koppa-inject": {
+      "version": "1.0.0",
+      "description": "Process injection primitives \u2014 shellcode, DLL, APC queue via Windows API (ctypes)",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-inject",
+      "tags": ["inject", "windows", "redteam", "offensive"],
+      "license": "MIT",
+      "downloads": 3210
+    },
+    "koppa-mem": {
+      "version": "1.0.0",
+      "description": "Process memory manipulation \u2014 read/write/scan/protect/modules via Windows API",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-mem",
+      "tags": ["memory", "windows", "forensics", "redteam"],
+      "license": "MIT",
+      "downloads": 2780
+    },
+    "koppa-evasion": {
+      "version": "1.0.0",
+      "description": "Anti-analysis suite \u2014 debugger detect, VM/sandbox detect, ETW patch, AMSI bypass, parent check",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-evasion",
+      "tags": ["evasion", "windows", "redteam", "offensive", "antidebug"],
+      "license": "MIT",
+      "downloads": 4120
+    },
+    "koppa-covert": {
+      "version": "1.0.0",
+      "description": "Covert channels \u2014 DNS tunneling, ICMP exfil, HTTP header steganography, TCP framing",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-covert",
+      "tags": ["covert", "exfil", "network", "redteam", "dns"],
+      "license": "MIT",
+      "downloads": 1950
+    },
+    "koppa-crypt": {
+      "version": "1.0.0",
+      "description": "Advanced cryptography \u2014 AES-256, ChaCha20, RC4, RSA keygen, XOR, PBKDF2, HMAC",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-crypt",
+      "tags": ["crypto", "encryption", "redteam", "ctf"],
+      "license": "MIT",
+      "downloads": 2340
+    },
+    "koppa-unsafe-runtime": {
+      "version": "1.0.0",
+      "description": "Rust native runtime for KOPPA unsafe{} blocks \u2014 compile security ops to native .exe",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-unsafe-runtime",
+      "tags": ["rust", "native", "compile", "windows", "redteam"],
+      "license": "MIT",
+      "downloads": 870
+    },
+    "koppa-shellcode-gen": {
+      "version": "1.1.0",
+      "description": "Shellcode generator \u2014 x86/x64, encoders (XOR, base64), staged/stageless, custom template",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-shellcode-gen",
+      "tags": ["shellcode", "offensive", "redteam", "windows"],
+      "license": "MIT",
+      "downloads": 3560
+    },
+    "koppa-pe-inject": {
+      "version": "1.0.0",
+      "description": "PE manipulation \u2014 reflective DLL loading, section injection, IAT hook, stomping",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-pe-inject",
+      "tags": ["pe", "inject", "windows", "redteam", "offensive"],
+      "license": "MIT",
+      "downloads": 1230
+    },
+    "koppa-lsass": {
+      "version": "1.0.0",
+      "description": "LSASS credential dumping \u2014 MiniDump, ProcDump wrapper, Comsvcs method",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-lsass",
+      "tags": ["credentials", "windows", "redteam", "offensive"],
+      "license": "MIT",
+      "downloads": 2890
+    },
+    "koppa-wmi": {
+      "version": "1.0.0",
+      "description": "WMI lateral movement \u2014 remote exec, persistence, event subscription",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-wmi",
+      "tags": ["wmi", "lateral", "windows", "redteam"],
+      "license": "MIT",
+      "downloads": 1670
+    },
+    "koppa-syscall": {
+      "version": "1.0.0",
+      "description": "Direct syscall invocation \u2014 bypass user-land hooks, SSN resolution, Hell's Gate pattern",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-syscall",
+      "tags": ["syscall", "windows", "evasion", "offensive", "redteam"],
+      "license": "MIT",
+      "downloads": 4450
+    },
+    "koppa-ntfs": {
+      "version": "1.0.0",
+      "description": "NTFS forensics \u2014 ADS streams, MFT parse, journal analysis, deleted file recovery",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-ntfs",
+      "tags": ["ntfs", "forensics", "windows"],
+      "license": "MIT",
+      "downloads": 980
     }
   }
 }
