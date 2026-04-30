@@ -474,6 +474,37 @@ async function loadRegistry() {
     document.getElementById('total-dl').textContent = totalDl.toLocaleString()
     document.getElementById('total-tags').textContent = mainCats.size
     buildTags(tags)
+
+    // Merge Supabase packages (published via web)
+    if (isSupabaseConfigured()) {
+      try {
+        const sb = supabase.createClient(KOPPA_SUPABASE_URL, KOPPA_SUPABASE_ANON_KEY)
+        const { data: sbPkgs } = await sb.from('packages')
+          .select('name,description,latest_version,author_name,tags,license,downloads,stars,repo_url,updated_at')
+          .order('downloads', { ascending: false })
+          .limit(500)
+        if (sbPkgs && sbPkgs.length > 0) {
+          sbPkgs.forEach(p => {
+            allPkgs[p.name] = {
+              version:    p.latest_version,
+              description:p.description,
+              author:     p.author_name || '—',
+              tags:       p.tags || [],
+              license:    p.license || 'MIT',
+              downloads:  p.downloads || 0,
+              stars:      p.stars || 0,
+              url:        p.repo_url || '',
+              updated_at: p.updated_at,
+              _source:    'supabase'
+            }
+          })
+          document.getElementById('total-count').textContent = Object.keys(allPkgs).length
+          const totalDl2 = Object.values(allPkgs).reduce((s,p) => s + (p.downloads||0), 0)
+          document.getElementById('total-dl').textContent = totalDl2.toLocaleString()
+        }
+      } catch(_) {}
+    }
+
     filterPkgs()
   } catch(e) {
     document.getElementById('pkg-list').innerHTML = `

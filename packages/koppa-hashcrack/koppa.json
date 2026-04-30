@@ -1,0 +1,10 @@
+{
+  "name": "koppa-hashcrack",
+  "version": "1.0.0",
+  "description": "Hash toolkit — MD5/SHA/NTLM identification, wordlist cracking, auto-detect type",
+  "main": "main.kop",
+  "repository": "https://github.com/guea14012/koppa-registry-",
+  "tags": ["hash", "crypto", "cracking", "ctf", "forensics"],
+  "license": "MIT",
+  "author": "KOPPA Team"
+}

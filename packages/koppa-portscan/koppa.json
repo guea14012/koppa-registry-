@@ -1,0 +1,10 @@
+{
+  "name": "koppa-portscan",
+  "version": "1.2.0",
+  "description": "TCP port scanner with service detection — common, range, top-100, banner grab",
+  "main": "main.kop",
+  "repository": "https://github.com/guea14012/koppa-registry-",
+  "tags": ["network", "recon", "scanner"],
+  "license": "MIT",
+  "author": "KOPPA Team"
+}

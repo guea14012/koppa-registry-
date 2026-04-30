@@ -1,0 +1,83 @@
+# koppa-portscan — TCP port scanner with service detection
+import net, log, time
+
+const COMMON_PORTS = [
+    21, 22, 23, 25, 53, 80, 110, 135, 139, 143, 443, 445,
+    993, 995, 1433, 1521, 3306, 3389, 5432, 5900, 6379,
+    8080, 8443, 8888, 9200, 27017, 50000
+]
+
+fn scan_port(host, port) {
+    return net.tcp_connect(host, port)
+}
+
+fn scan_common(host) {
+    log.info("Scanning {host} (common ports)...")
+    var open = []
+    for port in COMMON_PORTS {
+        if scan_port(host, port) {
+            let svc = net.service_name(port)
+            open.push({port: port, service: svc, state: "open"})
+            log.success("  {port}/tcp  OPEN  ({svc})")
+        }
+    }
+    log.info("Done — {open.len} open ports found")
+    return open
+}
+
+fn scan_range(host, start_port, end_port) {
+    log.info("Scanning {host}:{start_port}-{end_port}...")
+    var open = []
+    var port = start_port
+    while port <= end_port {
+        if scan_port(host, port) {
+            let svc = net.service_name(port)
+            open.push({port: port, service: svc, state: "open"})
+            log.success("  {port}/tcp  OPEN  ({svc})")
+        }
+        port += 1
+    }
+    return open
+}
+
+fn scan_top100(host) {
+    let top100 = [
+        1,7,9,13,17,19,21,22,23,25,37,42,43,49,53,69,70,
+        79,80,88,98,109,110,111,113,119,135,139,143,161,162,
+        179,194,220,259,264,389,443,445,464,500,512,513,514,
+        515,587,636,989,990,993,995,1025,1194,1433,1521,1723,
+        1900,2049,2181,3128,3268,3306,3389,3690,4444,4445,5432,
+        5900,5985,6379,6443,8000,8080,8081,8443,8888,9000,9090,
+        9200,9300,9418,10000,27017,27018,49152,50000
+    ]
+    log.info("Scanning {host} (top 100 ports)...")
+    var open = []
+    for port in top100 {
+        if scan_port(host, port) {
+            let svc = net.service_name(port)
+            open.push({port: port, service: svc})
+            log.success("  {port}/tcp  OPEN  ({svc})")
+        }
+    }
+    log.info("Done — {open.len} open ports")
+    return open
+}
+
+fn banner_grab(host, port) {
+    let banner = net.banner(host, port)
+    if banner {
+        log.info("Banner {host}:{port} → {banner}")
+    }
+    return banner
+}
+
+fn main() {
+    let host = "127.0.0.1"
+    log.info("koppa-portscan demo — scanning {host}")
+    let results = scan_common(host)
+    for r in results {
+        let p = r["port"]
+        let s = r["service"]
+        log.success("OPEN {p}/tcp ({s})")
+    }
+}

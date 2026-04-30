@@ -1,5 +1,5 @@
 -- KOPPA Registry — additions: stars, security_score, cve_ids, platforms
--- Run in Supabase SQL Editor after schema.sql
+-- Safe to re-run: uses IF NOT EXISTS + DROP IF EXISTS
 
 -- Add columns to packages
 alter table public.packages
@@ -19,6 +19,10 @@ create table if not exists public.package_stars (
   primary key (user_id, package_id)
 );
 alter table public.package_stars enable row level security;
+
+drop policy if exists "stars_select" on public.package_stars;
+drop policy if exists "stars_insert" on public.package_stars;
+drop policy if exists "stars_delete" on public.package_stars;
 create policy "stars_select" on public.package_stars for select using (true);
 create policy "stars_insert" on public.package_stars for insert with check (auth.uid() = user_id);
 create policy "stars_delete" on public.package_stars for delete using (auth.uid() = user_id);
@@ -35,11 +39,13 @@ begin
   return coalesce(new, old);
 end;
 $$;
+
+drop trigger if exists on_star_change on public.package_stars;
 create trigger on_star_change
   after insert or delete on public.package_stars
   for each row execute procedure public.update_star_count();
 
--- Weekly download cache (updated by cron or on-demand)
+-- Download daily cache
 create table if not exists public.download_daily (
   package_id uuid references public.packages(id) on delete cascade,
   day        date not null,
@@ -47,6 +53,10 @@ create table if not exists public.download_daily (
   primary key (package_id, day)
 );
 alter table public.download_daily enable row level security;
+
+drop policy if exists "dl_daily_select"  on public.download_daily;
+drop policy if exists "dl_daily_insert"  on public.download_daily;
+drop policy if exists "dl_daily_upsert"  on public.download_daily;
 create policy "dl_daily_select" on public.download_daily for select using (true);
 create policy "dl_daily_insert" on public.download_daily for insert with check (true);
 create policy "dl_daily_upsert" on public.download_daily for update using (true);

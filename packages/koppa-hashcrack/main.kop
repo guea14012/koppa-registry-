@@ -1,0 +1,96 @@
+# koppa-hashcrack — Hash identification, cracking, and generation
+import log, hash, encode, brute
+
+fn identify(h) {
+    let result = hash.identify(h)
+    log.info("Hash type: {result}")
+    return result
+}
+
+fn crack_md5(h, wordlist) {
+    log.info("Cracking MD5: {h}")
+    for word in wordlist {
+        let candidate = hash.md5(word)
+        if candidate == h {
+            log.success("Cracked: {word}")
+            return word
+        }
+    }
+    log.warn("Not found in wordlist")
+    return null
+}
+
+fn crack_sha256(h, wordlist) {
+    log.info("Cracking SHA256: {h}")
+    for word in wordlist {
+        let candidate = hash.sha256(word)
+        if candidate == h {
+            log.success("Cracked: {word}")
+            return word
+        }
+    }
+    log.warn("Not found in wordlist")
+    return null
+}
+
+fn crack_ntlm(h, wordlist) {
+    log.info("Cracking NTLM: {h}")
+    for word in wordlist {
+        let candidate = hash.ntlm(word)
+        if candidate == h {
+            log.success("Cracked: {word}")
+            return word
+        }
+    }
+    log.warn("Not found in wordlist")
+    return null
+}
+
+fn crack_auto(h, wordlist) {
+    let hash_type = hash.identify(h)
+    log.info("Detected type: {hash_type} — cracking...")
+    for word in wordlist {
+        var candidate = null
+        if hash_type == "md5" {
+            candidate = hash.md5(word)
+        } elif hash_type == "sha256" {
+            candidate = hash.sha256(word)
+        } elif hash_type == "sha1" {
+            candidate = hash.sha1(word)
+        } elif hash_type == "ntlm" {
+            candidate = hash.ntlm(word)
+        }
+        if candidate == h {
+            log.success("Cracked [{hash_type}]: {word}")
+            return {hash: h, type: hash_type, plaintext: word}
+        }
+    }
+    return null
+}
+
+fn hash_file(path) {
+    let info = hash.file(path)
+    log.info("File hash: {info}")
+    return info
+}
+
+fn rainbow_check(h) {
+    log.warn("Checking online databases not available in sandbox mode")
+    return null
+}
+
+fn gen_hashes(text) {
+    log.info("=== Hash Generation for: {text} ===")
+    log.info("MD5:    {hash.md5(text)}")
+    log.info("SHA1:   {hash.sha1(text)}")
+    log.info("SHA256: {hash.sha256(text)}")
+    log.info("SHA512: {hash.sha512(text)}")
+    log.info("NTLM:   {hash.ntlm(text)}")
+}
+
+fn main() {
+    let wordlist = ["password", "123456", "admin", "letmein", "qwerty"]
+    let md5_hash = "5f4dcc3b5aa765d61d8327deb882cf99"
+    let result = crack_auto(md5_hash, wordlist)
+    gen_hashes("koppa")
+}

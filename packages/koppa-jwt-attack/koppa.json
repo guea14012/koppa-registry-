@@ -1,0 +1,10 @@
+{
+  "name": "koppa-jwt-attack",
+  "version": "1.1.0",
+  "description": "JWT attack toolkit — decode, none-alg bypass, weak secret crack, token forge",
+  "main": "main.kop",
+  "repository": "https://github.com/guea14012/koppa-registry-",
+  "tags": ["jwt", "web", "exploit", "crypto", "ctf"],
+  "license": "MIT",
+  "author": "KOPPA Team"
+}

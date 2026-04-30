@@ -1,0 +1,81 @@
+# koppa-subdomain — Subdomain enumeration via DNS bruteforce
+import log, dns, net
+
+const DEFAULT_WORDLIST = [
+    "www", "mail", "ftp", "smtp", "pop", "imap", "vpn", "dev",
+    "stage", "staging", "test", "api", "app", "admin", "portal",
+    "blog", "shop", "store", "secure", "login", "auth", "sso",
+    "remote", "gateway", "proxy", "cdn", "static", "assets",
+    "media", "img", "images", "video", "download", "files",
+    "docs", "wiki", "help", "support", "status", "monitor",
+    "dashboard", "panel", "cpanel", "webmail", "ns1", "ns2",
+    "mx", "mx1", "mx2", "smtp1", "smtp2", "relay",
+    "ci", "cd", "jenkins", "gitlab", "git", "bitbucket",
+    "jira", "confluence", "slack", "internal", "intranet",
+    "db", "database", "mysql", "postgres", "redis", "elastic",
+    "k8s", "kubernetes", "docker", "registry", "vault"
+]
+
+fn resolve(hostname) {
+    return dns.resolve(hostname)
+}
+
+fn enum(domain, wordlist) {
+    let words = wordlist
+    log.info("Enumerating subdomains for {domain} ({words.len} words)...")
+    var found = []
+    for word in words {
+        let subdomain = "{word}.{domain}"
+        let ip = dns.resolve(subdomain)
+        if ip {
+            found.push({subdomain: subdomain, ip: ip})
+            log.success("  {subdomain} → {ip}")
+        }
+    }
+    log.info("Found {found.len} subdomains")
+    return found
+}
+
+fn enum_default(domain) {
+    return enum(domain, DEFAULT_WORDLIST)
+}
+
+fn zone_transfer(domain) {
+    let ns_list = dns.ns(domain)
+    log.info("NS records for {domain}: {ns_list}")
+    var results = []
+    for ns in ns_list {
+        log.warn("Attempting zone transfer from {ns}...")
+        let records = dns.axfr(domain, ns)
+        if records {
+            log.success("Zone transfer succeeded from {ns}!")
+            results.push({ns: ns, records: records})
+        }
+    }
+    return results
+}
+
+fn reverse_lookup(ip) {
+    let hostname = dns.reverse(ip)
+    log.info("{ip} → {hostname}")
+    return hostname
+}
+
+fn check_takeover(subdomain) {
+    let ip = dns.resolve(subdomain)
+    if !ip {
+        let cname = dns.cname(subdomain)
+        if cname {
+            log.warn("Dangling CNAME: {subdomain} → {cname} (possible takeover!)")
+            return {vulnerable: true, cname: cname}
+        }
+    }
+    return {vulnerable: false}
+}
+
+fn main() {
+    let domain = "example.com"
+    log.info("koppa-subdomain demo")
+    let results = enum_default(domain)
+    log.info("Total found: {results.len}")
+}
