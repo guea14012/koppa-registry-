@@ -1,0 +1,46 @@
+# .github/workflows/koppa-publish.yml
+# Auto-publish to KOPPA Registry on git tag push
+#
+# Setup:
+#   1. Get your API token: koppa pkg token
+#   2. Add to GitHub repo → Settings → Secrets → KOPPA_TOKEN
+#   3. Push a version tag: git tag v1.0.0 && git push --tags
+
+name: Publish to KOPPA Registry
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install KOPPA
+        run: pip install koppa-lang
+
+      - name: Publish to KOPPA Registry
+        env:
+          KOPPA_TOKEN: ${{ secrets.KOPPA_TOKEN }}
+        run: koppa pkg publish
+
+      - name: Summary
+        run: |
+          echo "## Published to KOPPA Registry" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Package: \`$(cat koppa.json | python3 -c "import sys,json;d=json.load(sys.stdin);print(d['name']+'@'+d['version'])")\`" >> $GITHUB_STEP_SUMMARY
+          echo "Registry: https://guea14012.github.io/koppa-registry-/" >> $GITHUB_STEP_SUMMARY

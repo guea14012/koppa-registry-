@@ -555,11 +555,18 @@ function renderPage() {
     return
   }
 
-  document.getElementById('pkg-list').innerHTML = pageEntries.map(([name, p]) => `
-    <div class="pkg-card" onclick="openModal('${name}')">
+  document.getElementById('pkg-list').innerHTML = pageEntries.map(([name, p]) => {
+    const score = calcQuickScore(p)
+    const scoreColor = score >= 90 ? '#00ff88' : score >= 75 ? '#00ffcc' : score >= 60 ? '#ffcc00' : '#ff8800'
+    const starCount = (p.stars || 0)
+    return `
+    <a class="pkg-card" href="package.html?name=${encodeURIComponent(name)}">
       <div class="pkg-top">
         <span class="pkg-name">${name}</span>
-        <span class="pkg-version">v${p.version}</span>
+        <span class="pkg-version">v${p.version || p.latest_version}</span>
+        <span style="margin-left:auto;font-size:11px;font-weight:700;color:${scoreColor};
+          background:rgba(0,255,136,.07);border:1px solid ${scoreColor}33;
+          padding:2px 7px;border-radius:4px">Score ${score}</span>
       </div>
       <p class="pkg-desc">${p.description}</p>
       <div class="pkg-footer">
@@ -567,13 +574,14 @@ function renderPage() {
           ${(p.tags||[]).slice(0,4).map(t => `<span class="pkg-tag">${t}</span>`).join('')}
         </div>
         <div class="pkg-meta">
-          <span class="pkg-author">by ${p.author}</span>
+          <span class="pkg-author">by ${p.author || p.author_name || '—'}</span>
           <span class="pkg-dl">↓ ${(p.downloads||0).toLocaleString()}</span>
+          ${starCount > 0 ? `<span class="pkg-dl">★ ${starCount}</span>` : ''}
         </div>
       </div>
       <div class="pkg-install"><code>koppa pkg install ${name}</code></div>
-    </div>
-  `).join('')
+    </a>`
+  }).join('')
 
   renderPagination(totalPages)
 }
@@ -660,6 +668,18 @@ document.addEventListener('keydown', e => {
     document.body.style.overflow = ''
   }
 })
+
+function calcQuickScore(p) {
+  let s = 75
+  if (p.repo_url || p.url) s += 8
+  if (p.license) s += 4
+  if ((p.downloads || 0) > 1000) s += 5
+  if ((p.downloads || 0) > 5000) s += 3
+  if ((p.tags||[]).some(t => ['defensive','blueteam'].includes(t))) s += 5
+  if ((p.tags||[]).some(t => ['inject','lsass','syscall'].includes(t)) &&
+      !(p.tags||[]).some(t => ['redteam','ctf'].includes(t))) s -= 8
+  return Math.max(0, Math.min(100, s))
+}
 
 loadRegistry()
 </script>

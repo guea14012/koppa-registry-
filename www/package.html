@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title id="page-title">KOPPA Package</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml"/>
+  <style>
+    :root{
+      --bg:#0a0a1a;--card:#1a1a2e;--border:#3a3a5e;--border2:#2a2a4e;
+      --gold:#ffcc00;--cyan:#00ffcc;--pink:#ff66aa;--purple:#aa66ff;
+      --text:#e0e0ff;--muted:#8080a0;--green:#00ff88;--red:#ff4444;
+      --orange:#ff8800;--blue:#4488ff;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+      font-size:14px;line-height:1.6}
+
+    /* ── Nav ── */
+    nav{display:flex;align-items:center;padding:0 24px;height:52px;
+      background:var(--card);border-bottom:1px solid var(--border);
+      position:sticky;top:0;z-index:100;gap:12px}
+    .nav-logo{font-size:16px;font-weight:700;color:var(--gold);text-decoration:none}
+    .nav-links{display:flex;gap:20px}
+    .nav-links a{color:var(--muted);text-decoration:none;font-size:13px}
+    .nav-links a:hover{color:var(--text)}
+    .nav-actions{margin-left:auto;display:flex;gap:10px;align-items:center}
+    .btn{padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;
+      cursor:pointer;border:none;transition:all .15s;display:inline-flex;
+      align-items:center;gap:6px;text-decoration:none}
+    .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border2)}
+    .btn-ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+    .btn-star{background:transparent;color:var(--gold);border:1px solid rgba(255,204,0,.3);
+      padding:6px 14px;font-size:13px}
+    .btn-star:hover,.btn-star.starred{background:rgba(255,204,0,.12);border-color:var(--gold)}
+    .btn-sm{padding:4px 10px;font-size:12px}
+
+    /* ── Hero ── */
+    .hero{background:linear-gradient(180deg,#12122a 0%,var(--bg) 100%);
+      border-bottom:1px solid var(--border);padding:36px 24px 28px}
+    .hero-inner{max-width:1100px;margin:0 auto;
+      display:flex;align-items:flex-start;gap:32px;flex-wrap:wrap}
+    .hero-main{flex:1;min-width:280px}
+    .breadcrumb{font-size:12px;color:var(--muted);margin-bottom:10px}
+    .breadcrumb a{color:var(--muted);text-decoration:none}
+    .breadcrumb a:hover{color:var(--cyan)}
+    .hero-title{font-size:28px;font-weight:800;color:var(--text);margin-bottom:6px;
+      display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .ver-badge{font-size:13px;background:rgba(0,255,204,.1);color:var(--cyan);
+      border:1px solid rgba(0,255,204,.3);padding:3px 10px;border-radius:5px;
+      font-family:monospace;font-weight:500}
+    .hero-desc{color:var(--muted);font-size:15px;margin-bottom:16px;max-width:640px}
+    .install-box{display:flex;align-items:center;gap:0;
+      background:var(--card);border:1px solid var(--border);border-radius:7px;
+      overflow:hidden;max-width:480px;margin-bottom:16px}
+    .install-prompt{padding:10px 14px;color:var(--gold);font-family:monospace;
+      font-size:13px;border-right:1px solid var(--border2);background:rgba(255,204,0,.04)}
+    .install-cmd{padding:10px 14px;font-family:monospace;font-size:13px;
+      color:var(--text);flex:1;background:transparent;border:none;
+      outline:none;cursor:text;white-space:nowrap;overflow:hidden}
+    .install-copy{padding:10px 14px;background:transparent;border:none;
+      color:var(--muted);cursor:pointer;font-size:12px;font-weight:600;
+      transition:all .15s;border-left:1px solid var(--border2)}
+    .install-copy:hover{color:var(--cyan)}
+    .hero-meta{display:flex;align-items:center;gap:20px;flex-wrap:wrap;font-size:13px}
+    .meta-item{display:flex;align-items:center;gap:5px;color:var(--muted)}
+    .meta-item strong{color:var(--text)}
+    .hero-actions{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+    .platform-badges{display:flex;gap:6px;flex-wrap:wrap}
+    .plat-badge{padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600}
+    .plat-windows{background:rgba(68,136,255,.15);color:var(--blue);border:1px solid rgba(68,136,255,.3)}
+    .plat-linux  {background:rgba(255,204,0,.1);  color:var(--gold); border:1px solid rgba(255,204,0,.3)}
+    .plat-macos  {background:rgba(255,102,170,.1);color:var(--pink); border:1px solid rgba(255,102,170,.3)}
+    .plat-any    {background:rgba(0,255,204,.08); color:var(--cyan); border:1px solid rgba(0,255,204,.25)}
+    .badge-koppa{padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;
+      background:rgba(170,102,255,.12);color:var(--purple);
+      border:1px solid rgba(170,102,255,.25)}
+
+    /* ── Score widget in hero ── */
+    .score-widget{flex-shrink:0;display:flex;flex-direction:column;
+      align-items:center;gap:6px}
+    .score-svg{width:88px;height:88px}
+    .score-label{font-size:11px;color:var(--muted);text-transform:uppercase;
+      letter-spacing:.5px;text-align:center}
+
+    /* ── Layout ── */
+    .container{max-width:1100px;margin:0 auto;padding:28px 24px}
+    .layout{display:grid;grid-template-columns:1fr 300px;gap:24px}
+    @media(max-width:820px){.layout{grid-template-columns:1fr}}
+
+    /* ── Main content ── */
+    .section{background:var(--card);border:1px solid var(--border);
+      border-radius:8px;padding:24px;margin-bottom:16px}
+    .section-title{font-size:12px;font-weight:600;text-transform:uppercase;
+      letter-spacing:1px;color:var(--muted);margin-bottom:16px;
+      padding-bottom:10px;border-bottom:1px solid var(--border2)}
+
+    /* CVE badges */
+    .cve-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+    .cve-badge{padding:4px 12px;border-radius:4px;font-size:12px;font-weight:600;
+      background:rgba(255,68,68,.1);color:var(--red);
+      border:1px solid rgba(255,68,68,.25);text-decoration:none;
+      font-family:monospace;transition:all .15s}
+    .cve-badge:hover{background:rgba(255,68,68,.2)}
+
+    /* README markdown */
+    #readme{color:var(--text);line-height:1.75}
+    #readme h1{font-size:22px;margin:0 0 16px;color:var(--text);
+      padding-bottom:10px;border-bottom:1px solid var(--border2)}
+    #readme h2{font-size:18px;margin:24px 0 12px;color:var(--text)}
+    #readme h3{font-size:15px;margin:18px 0 8px;color:var(--text)}
+    #readme p{margin-bottom:12px;color:var(--muted)}
+    #readme code{background:var(--border2);color:var(--cyan);
+      padding:1px 6px;border-radius:3px;font-size:12px;font-family:monospace}
+    #readme pre{background:var(--bg);border:1px solid var(--border2);
+      border-radius:6px;padding:14px 16px;overflow-x:auto;margin-bottom:14px}
+    #readme pre code{background:none;color:var(--text);font-size:12.5px}
+    #readme ul,#readme ol{margin:0 0 12px 20px;color:var(--muted)}
+    #readme li{margin-bottom:4px}
+    #readme a{color:var(--cyan);text-decoration:none}
+    #readme a:hover{text-decoration:underline}
+    #readme blockquote{border-left:3px solid var(--border);padding-left:14px;
+      color:var(--muted);margin:12px 0}
+    #readme table{width:100%;border-collapse:collapse;margin-bottom:14px}
+    #readme th,#readme td{padding:8px 12px;border:1px solid var(--border2);
+      text-align:left;font-size:13px}
+    #readme th{background:var(--border2);color:var(--text);font-weight:600}
+    #readme td{color:var(--muted)}
+    .readme-placeholder{color:var(--muted);font-size:13px;text-align:center;
+      padding:32px;opacity:.6}
+
+    /* Chart */
+    .chart-wrap{position:relative;height:180px}
+    .chart-empty{text-align:center;padding:40px;color:var(--muted);font-size:13px}
+
+    /* ── Sidebar ── */
+    .sidebar{display:flex;flex-direction:column;gap:14px}
+    .side-box{background:var(--card);border:1px solid var(--border);
+      border-radius:8px;padding:16px}
+    .side-title{font-size:11px;font-weight:600;text-transform:uppercase;
+      letter-spacing:1px;color:var(--muted);margin-bottom:12px}
+    .side-cmd{display:flex;align-items:center;gap:8px;
+      background:var(--bg);border:1px solid var(--border2);
+      border-radius:5px;padding:8px 12px;font-family:monospace;font-size:12px;
+      color:var(--gold)}
+    .side-cmd::before{content:'$';color:var(--muted)}
+    .meta-row{display:flex;justify-content:space-between;padding:6px 0;
+      border-bottom:1px solid var(--border2);font-size:13px}
+    .meta-row:last-child{border-bottom:none}
+    .meta-key{color:var(--muted)}
+    .meta-val{color:var(--text);font-weight:500;text-align:right}
+    .tag-cloud{display:flex;flex-wrap:wrap;gap:5px}
+    .pkg-tag{padding:3px 8px;border-radius:4px;font-size:11px;
+      background:var(--border2);color:var(--purple);cursor:pointer}
+    .pkg-tag:hover{color:var(--cyan)}
+    .ver-list{display:flex;flex-direction:column;gap:4px}
+    .ver-item{display:flex;justify-content:space-between;align-items:center;
+      padding:6px 8px;border-radius:5px;background:var(--bg);
+      border:1px solid var(--border2);font-size:12px}
+    .ver-item.latest{border-color:rgba(0,255,204,.3);
+      background:rgba(0,255,204,.05)}
+    .ver-num{font-family:monospace;color:var(--cyan);font-weight:600}
+    .ver-date{color:var(--muted)}
+    .link-btn{display:flex;align-items:center;gap:8px;padding:8px 10px;
+      background:var(--bg);border:1px solid var(--border2);border-radius:5px;
+      color:var(--muted);text-decoration:none;font-size:12px;
+      transition:all .15s;margin-bottom:6px}
+    .link-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+    .badge-md-wrap{background:var(--bg);border:1px solid var(--border2);
+      border-radius:5px;padding:8px 10px;margin-top:6px}
+    .badge-md-code{font-family:monospace;font-size:10px;color:var(--muted);
+      word-break:break-all;display:block}
+    .badge-copy{margin-top:6px;width:100%;padding:5px;background:transparent;
+      border:1px solid var(--border2);color:var(--muted);border-radius:4px;
+      font-size:11px;cursor:pointer}
+    .badge-copy:hover{border-color:var(--cyan);color:var(--cyan)}
+
+    /* Audit bar */
+    .audit-issues{margin-top:10px}
+    .issue-row{display:flex;align-items:center;gap:8px;padding:5px 0;
+      font-size:12px;border-bottom:1px solid var(--border2)}
+    .issue-row:last-child{border-bottom:none}
+    .sev-high  {color:var(--red)}
+    .sev-medium{color:var(--orange)}
+    .sev-low   {color:var(--gold)}
+
+    /* Footer */
+    footer{border-top:1px solid var(--border);text-align:center;
+      padding:20px;color:var(--muted);font-size:12px;margin-top:32px}
+    footer a{color:var(--cyan);text-decoration:none}
+
+    /* Loading */
+    .loading{display:flex;align-items:center;justify-content:center;
+      padding:80px;flex-direction:column;gap:14px;color:var(--muted)}
+    .spinner{width:32px;height:32px;border:3px solid var(--border2);
+      border-top-color:var(--cyan);border-radius:50%;
+      animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .not-found{text-align:center;padding:80px 24px;color:var(--muted)}
+    .not-found h2{font-size:20px;color:var(--text);margin-bottom:8px}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">KOPP<span style="color:var(--cyan)">PKG</span></a>
+  <div class="nav-links">
+    <a href="index.html">Registry</a>
+    <a href="publish.html" style="color:var(--cyan)">+ Publish</a>
+  </div>
+  <div class="nav-actions" id="nav-actions">
+    <a href="login.html" class="btn btn-ghost btn-sm" id="nav-login">Login</a>
+  </div>
+</nav>
+
+<div id="loading" class="loading">
+  <div class="spinner"></div>
+  <p>Loading package…</p>
+</div>
+<div id="not-found" class="not-found" style="display:none">
+  <h2>Package not found</h2>
+  <p style="margin-bottom:20px">This package doesn't exist in the registry.</p>
+  <a href="index.html" class="btn btn-ghost">← Back to Registry</a>
+</div>
+
+<div id="pkg-page" style="display:none">
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-main">
+      <div class="breadcrumb">
+        <a href="index.html">Registry</a> / <span id="h-name-bc"></span>
+      </div>
+      <div class="hero-title">
+        <span id="h-name"></span>
+        <span class="ver-badge" id="h-ver"></span>
+      </div>
+      <p class="hero-desc" id="h-desc"></p>
+
+      <div class="install-box">
+        <span class="install-prompt">$</span>
+        <input class="install-cmd" id="h-install-cmd" readonly/>
+        <button class="install-copy" onclick="copyInstall()">Copy</button>
+      </div>
+
+      <div class="hero-meta">
+        <div class="meta-item">↓ <strong id="h-dl">0</strong> downloads</div>
+        <div class="meta-item">★ <strong id="h-stars">0</strong></div>
+        <div class="meta-item">Updated <strong id="h-updated"></strong></div>
+        <div class="meta-item" id="h-license-meta"></div>
+      </div>
+
+      <div class="hero-actions">
+        <button class="btn btn-star" id="btn-star" onclick="toggleStar()">
+          ☆ Star
+        </button>
+        <a id="h-github-btn" href="#" target="_blank" class="btn btn-ghost btn-sm">
+          View on GitHub
+        </a>
+        <span class="badge-koppa">KOPPA v3.0+</span>
+        <div class="platform-badges" id="h-platforms"></div>
+      </div>
+
+      <div class="cve-list" id="h-cve-list" style="margin-top:10px"></div>
+    </div>
+
+    <!-- Security Score -->
+    <div class="score-widget" id="score-widget">
+      <svg class="score-svg" viewBox="0 0 36 36" id="score-svg">
+        <circle cx="18" cy="18" r="15.9" fill="none" stroke="#2a2a4e" stroke-width="3.2"/>
+        <circle cx="18" cy="18" r="15.9" fill="none" id="score-arc"
+          stroke="#00ff88" stroke-width="3.2"
+          stroke-dasharray="0 100" stroke-dashoffset="25"
+          stroke-linecap="round" transform="rotate(-90 18 18)"/>
+        <text x="18" y="16" text-anchor="middle" fill="#e0e0ff" font-size="7.5" font-weight="bold" id="score-num">—</text>
+        <text x="18" y="23" text-anchor="middle" fill="#8080a0" font-size="5" id="score-grade">Score</text>
+      </svg>
+      <span class="score-label">Security Score</span>
+    </div>
+  </div>
+</div>
+
+<!-- Main layout -->
+<div class="container">
+  <div class="layout">
+
+    <!-- Main -->
+    <div>
+      <!-- Security issues (if any) -->
+      <div class="section" id="security-section" style="display:none">
+        <div class="section-title">Security Analysis</div>
+        <div id="security-issues"></div>
+      </div>
+
+      <!-- README -->
+      <div class="section">
+        <div class="section-title">README</div>
+        <div id="readme"><div class="readme-placeholder">No README available for this package.</div></div>
+      </div>
+
+      <!-- Download chart -->
+      <div class="section">
+        <div class="section-title">Downloads — Last 30 Days</div>
+        <div class="chart-wrap">
+          <canvas id="dl-chart"></canvas>
+          <div class="chart-empty" id="chart-empty" style="display:none">No download data available yet.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+      <!-- Install -->
+      <div class="side-box">
+        <div class="side-title">Install</div>
+        <div class="side-cmd" id="s-install"></div>
+        <div class="badge-md-wrap" style="margin-top:10px">
+          <span style="font-size:11px;color:var(--muted);display:block;margin-bottom:5px">Badge for README:</span>
+          <code class="badge-md-code" id="badge-md"></code>
+          <button class="badge-copy" onclick="copyBadge()">Copy Badge Markdown</button>
+        </div>
+      </div>
+
+      <!-- Metadata -->
+      <div class="side-box">
+        <div class="side-title">Details</div>
+        <div class="meta-row"><span class="meta-key">Version</span><span class="meta-val" id="s-ver"></span></div>
+        <div class="meta-row"><span class="meta-key">License</span><span class="meta-val" id="s-license"></span></div>
+        <div class="meta-row"><span class="meta-key">Author</span><span class="meta-val" id="s-author"></span></div>
+        <div class="meta-row"><span class="meta-key">Published</span><span class="meta-val" id="s-published"></span></div>
+        <div class="meta-row"><span class="meta-key">Downloads</span><span class="meta-val" id="s-dl"></span></div>
+        <div class="meta-row" id="s-weekly-row">
+          <span class="meta-key">This week</span><span class="meta-val" id="s-weekly"></span>
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div class="side-box">
+        <div class="side-title">Tags</div>
+        <div class="tag-cloud" id="s-tags"></div>
+      </div>
+
+      <!-- Version history -->
+      <div class="side-box">
+        <div class="side-title">Versions</div>
+        <div class="ver-list" id="s-versions">
+          <div class="ver-item latest">
+            <span class="ver-num" id="s-ver-latest"></span>
+            <span class="ver-date">latest</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Links -->
+      <div class="side-box">
+        <div class="side-title">Links</div>
+        <a id="s-github" href="#" target="_blank" class="link-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          GitHub Repository
+        </a>
+        <a id="s-koppa-doc" href="https://guea14012.github.io/koppa-lang" target="_blank" class="link-btn">
+          📄 KOPPA Docs
+        </a>
+        <a href="index.html" class="link-btn">← Back to Registry</a>
+      </div>
+
+    </aside>
+  </div>
+</div>
+
+</div><!-- end pkg-page -->
+
+<footer>
+  KOPPA Package Registry · <a href="index.html">Browse</a> · <a href="https://github.com/guea14012/koppa-lang">GitHub</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="_config.js"></script>
+<script>
+let db = null, currentUser = null, pkgData = null, isStarred = false
+
+if (isSupabaseConfigured()) {
+  db = supabase.createClient(KOPPA_SUPABASE_URL, KOPPA_SUPABASE_ANON_KEY)
+}
+
+const name = new URLSearchParams(location.search).get('name') || ''
+
+// ── Security score computation (client-side) ──────────────────────────────────
+function computeScore(pkg) {
+  let score = 75
+  const issues = []
+
+  if (pkg.repo_url)  score += 8
+  if (pkg.license && pkg.license !== 'Unknown') score += 4
+  if ((pkg.downloads || 0) > 1000) score += 5
+  if ((pkg.downloads || 0) > 5000) score += 3
+  if ((pkg.tags || []).includes('defensive') || (pkg.tags || []).includes('blueteam')) score += 5
+
+  const offensiveTags = ['inject','exploit','offensive','shellcode','lsass','syscall']
+  const hasUnsafe = (pkg.tags || []).some(t => offensiveTags.includes(t))
+  if (hasUnsafe && !((pkg.tags||[]).includes('redteam') || (pkg.tags||[]).includes('ctf'))) {
+    score -= 10
+    issues.push({type: 'offensive_without_disclosure', severity: 'medium',
+      detail: 'Package contains offensive capabilities — ensure responsible use'})
+  }
+  if ((pkg.cve_ids || []).length > 0) {
+    issues.push({type: 'cve_related', severity: 'info',
+      detail: `Package is related to ${pkg.cve_ids.length} CVE(s) — review before use`})
+  }
+  score = Math.max(0, Math.min(100, score))
+  const grade = score >= 90 ? 'A' : score >= 75 ? 'B' : score >= 60 ? 'C' : score >= 40 ? 'D' : 'F'
+  return {score, grade, issues}
+}
+
+// ── Render security score SVG ──────────────────────────────────────────────────
+function renderScore(score, grade) {
+  const colors = {A:'#00ff88', B:'#00ffcc', C:'#ffcc00', D:'#ff8800', F:'#ff4444'}
+  const arc = document.getElementById('score-arc')
+  const numEl = document.getElementById('score-num')
+  const gradeEl = document.getElementById('score-grade')
+  const pct = score
+  arc.setAttribute('stroke-dasharray', `${pct} ${100 - pct}`)
+  arc.setAttribute('stroke', colors[grade] || '#00ff88')
+  numEl.textContent = score
+  numEl.setAttribute('fill', colors[grade] || '#00ff88')
+  gradeEl.textContent = 'Grade ' + grade
+  gradeEl.setAttribute('fill', colors[grade] || '#8080a0')
+}
+
+// ── Platform badges ───────────────────────────────────────────────────────────
+function renderPlatforms(platforms) {
+  if (!platforms || platforms.length === 0) platforms = ['any']
+  return platforms.map(p => {
+    const cls = 'plat-' + ({'windows':'windows','linux':'linux','macos':'macos','any':'any'}[p] || 'any')
+    const icons = {windows:'🪟', linux:'🐧', macos:'🍎', any:'🌐'}
+    return `<span class="plat-badge ${cls}">${icons[p]||''} ${p}</span>`
+  }).join('')
+}
+
+// ── Download chart ─────────────────────────────────────────────────────────────
+async function renderChart(pkgId) {
+  const canvas = document.getElementById('dl-chart')
+  const emptyEl = document.getElementById('chart-empty')
+
+  let dlData = []
+  if (db && pkgId) {
+    const ago = new Date(Date.now() - 30 * 864e5).toISOString()
+    const { data } = await db.from('download_events')
+      .select('downloaded_at')
+      .eq('package_id', pkgId)
+      .gte('downloaded_at', ago)
+    dlData = data || []
+  }
+
+  // Build 30-day array
+  const days = []
+  const counts = {}
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(Date.now() - i * 864e5)
+    const key = d.toISOString().slice(0, 10)
+    days.push(key)
+    counts[key] = 0
+  }
+  dlData.forEach(e => {
+    const key = e.downloaded_at.slice(0, 10)
+    if (key in counts) counts[key]++
+  })
+  const values = days.map(d => counts[d])
+  const total = values.reduce((a, b) => a + b, 0)
+
+  if (total === 0 && !pkgData?.downloads) {
+    canvas.style.display = 'none'
+    emptyEl.style.display = 'block'
+    return
+  }
+
+  const labels = days.map(d => {
+    const dt = new Date(d)
+    return (dt.getMonth() + 1) + '/' + dt.getDate()
+  })
+
+  const ctx = canvas.getContext('2d')
+  const grad = ctx.createLinearGradient(0, 0, 0, 160)
+  grad.addColorStop(0, 'rgba(0,255,204,.25)')
+  grad.addColorStop(1, 'rgba(0,255,204,0)')
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data: values.length ? values : days.map(() => Math.floor(Math.random() * 30 + 10)),
+        borderColor: '#00ffcc',
+        backgroundColor: grad,
+        borderWidth: 2,
+        pointRadius: 0,
+        fill: true,
+        tension: 0.4,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: {
+        backgroundColor: '#1a1a2e',
+        titleColor: '#e0e0ff',
+        bodyColor: '#8080a0',
+        borderColor: '#3a3a5e',
+        borderWidth: 1,
+        callbacks: { title: items => items[0].label, label: item => ` ${item.raw} downloads` }
+      }},
+      scales: {
+        x: { grid: { color: '#2a2a4e' }, ticks: { color: '#8080a0', maxTicksLimit: 8, font: { size: 11 } } },
+        y: { grid: { color: '#2a2a4e' }, ticks: { color: '#8080a0', font: { size: 11 } }, beginAtZero: true }
+      }
+    }
+  })
+}
+
+// ── Stars ──────────────────────────────────────────────────────────────────────
+async function checkStarred(pkgId) {
+  if (!db || !currentUser || !pkgId) return
+  const { data } = await db.from('package_stars')
+    .select('package_id')
+    .eq('user_id', currentUser.id)
+    .eq('package_id', pkgId)
+    .single()
+  isStarred = !!data
+  updateStarBtn()
+}
+
+function updateStarBtn() {
+  const btn = document.getElementById('btn-star')
+  const count = pkgData?.stars || 0
+  btn.textContent = (isStarred ? '★' : '☆') + ' ' + (isStarred ? 'Starred' : 'Star') + ' ' + count
+  btn.classList.toggle('starred', isStarred)
+}
+
+async function toggleStar() {
+  if (!currentUser) { location.href = 'login.html'; return }
+  if (!pkgData?.id) return
+  if (isStarred) {
+    await db.from('package_stars').delete()
+      .eq('user_id', currentUser.id).eq('package_id', pkgData.id)
+    isStarred = false
+    pkgData.stars = Math.max(0, (pkgData.stars || 0) - 1)
+  } else {
+    await db.from('package_stars').insert({ user_id: currentUser.id, package_id: pkgData.id })
+    isStarred = true
+    pkgData.stars = (pkgData.stars || 0) + 1
+  }
+  document.getElementById('h-stars').textContent = pkgData.stars
+  updateStarBtn()
+}
+
+// ── Render package ─────────────────────────────────────────────────────────────
+function renderPackage(pkg, _source) {
+  pkgData = pkg
+  document.title = `${pkg.name} — KOPPA Registry`
+
+  // Hero
+  document.getElementById('h-name-bc').textContent = pkg.name
+  document.getElementById('h-name').textContent    = pkg.name
+  document.getElementById('h-ver').textContent     = 'v' + pkg.latest_version
+  document.getElementById('h-desc').textContent    = pkg.description
+  document.getElementById('h-install-cmd').value   = 'koppa pkg install ' + pkg.name
+  document.getElementById('h-dl').textContent      = (pkg.downloads || 0).toLocaleString()
+  document.getElementById('h-stars').textContent   = (pkg.stars || 0).toLocaleString()
+  document.getElementById('h-updated').textContent = pkg.updated_at
+    ? new Date(pkg.updated_at).toLocaleDateString()
+    : '—'
+  document.getElementById('h-license-meta').innerHTML =
+    `<span>📄 ${pkg.license || 'MIT'}</span>`
+
+  const githubUrl = pkg.repo_url || pkg.url || '#'
+  document.getElementById('h-github-btn').href = githubUrl
+  document.getElementById('s-github').href     = githubUrl
+
+  // Platforms
+  document.getElementById('h-platforms').innerHTML = renderPlatforms(pkg.platforms)
+
+  // CVEs
+  const cveEl = document.getElementById('h-cve-list')
+  if (pkg.cve_ids && pkg.cve_ids.length > 0) {
+    cveEl.innerHTML = pkg.cve_ids.map(cve =>
+      `<a class="cve-badge" href="https://nvd.nist.gov/vuln/detail/${cve}" target="_blank">${cve}</a>`
+    ).join('')
+    cveEl.style.display = 'flex'
+  }
+
+  // Sidebar
+  document.getElementById('s-install').textContent = 'koppa pkg install ' + pkg.name
+  document.getElementById('s-ver').textContent      = pkg.latest_version
+  document.getElementById('s-license').textContent  = pkg.license || 'MIT'
+  document.getElementById('s-author').textContent   = pkg.author_name || pkg.author || '—'
+  document.getElementById('s-published').textContent = pkg.created_at
+    ? new Date(pkg.created_at).toLocaleDateString() : '—'
+  document.getElementById('s-dl').textContent        = (pkg.downloads || 0).toLocaleString()
+  document.getElementById('s-weekly').textContent    = (pkg.weekly_dl || 0).toLocaleString()
+  document.getElementById('s-ver-latest').textContent = pkg.latest_version
+
+  // Tags
+  document.getElementById('s-tags').innerHTML = (pkg.tags || []).map(t =>
+    `<span class="pkg-tag" onclick="location.href='index.html?tag=${t}'">${t}</span>`
+  ).join('')
+
+  // Badge markdown
+  const badgeUrl = `https://img.shields.io/badge/KOPPA-${encodeURIComponent(pkg.name)}-00ffcc?style=flat`
+  const pageUrl  = `https://guea14012.github.io/koppa-registry-/package.html?name=${pkg.name}`
+  const badgeMd  = `[![KOPPA](${badgeUrl})](${pageUrl})`
+  document.getElementById('badge-md').textContent = badgeMd
+
+  // README
+  if (pkg.readme && pkg.readme.trim()) {
+    document.getElementById('readme').innerHTML = marked.parse(pkg.readme)
+  } else {
+    // Try to show a generated README
+    document.getElementById('readme').innerHTML = `
+      <h1>${pkg.name}</h1>
+      <p>${pkg.description}</p>
+      <h2>Install</h2>
+      <pre><code>koppa pkg install ${pkg.name}</code></pre>
+      <h2>Usage</h2>
+      <pre><code>import ${pkg.name.replace('koppa-', '')}
+
+fn main() {
+    # Use ${pkg.name} here
+}
+</code></pre>`
+  }
+
+  // Security score
+  const scoreData = pkg.security_score != null
+    ? { score: pkg.security_score, grade: pkg.security_grade || 'B', issues: pkg.security_issues || [] }
+    : computeScore(pkg)
+  renderScore(scoreData.score, scoreData.grade)
+
+  if (scoreData.issues && scoreData.issues.length > 0) {
+    document.getElementById('security-section').style.display = 'block'
+    document.getElementById('security-issues').innerHTML = scoreData.issues.map(issue => `
+      <div class="issue-row">
+        <span class="sev-${issue.severity}">● ${issue.severity.toUpperCase()}</span>
+        <span>${issue.type.replace(/_/g, ' ')}</span>
+        <span style="color:var(--muted);margin-left:auto;font-size:11px">${issue.detail || ''}</span>
+      </div>`).join('')
+  }
+
+  document.getElementById('loading').style.display   = 'none'
+  document.getElementById('pkg-page').style.display  = 'block'
+
+  // Async: chart + stars
+  renderChart(pkg.id)
+  if (currentUser) checkStarred(pkg.id)
+  updateStarBtn()
+}
+
+// ── Load package data ──────────────────────────────────────────────────────────
+async function loadPackage() {
+  if (!name) {
+    document.getElementById('loading').style.display   = 'none'
+    document.getElementById('not-found').style.display = 'block'
+    return
+  }
+
+  // Try Supabase
+  if (db) {
+    const { data } = await db.from('packages')
+      .select('*').eq('name', name).single()
+    if (data) {
+      renderPackage(data, 'supabase')
+      // Load version history
+      const { data: versions } = await db.from('package_versions')
+        .select('version,published_at')
+        .eq('package_id', data.id)
+        .order('published_at', { ascending: false })
+        .limit(10)
+      if (versions && versions.length > 1) {
+        document.getElementById('s-versions').innerHTML = versions.map((v, i) => `
+          <div class="ver-item ${i === 0 ? 'latest' : ''}">
+            <span class="ver-num">${v.version}</span>
+            <span class="ver-date">${new Date(v.published_at).toLocaleDateString()}</span>
+          </div>`).join('')
+      }
+      return
+    }
+  }
+
+  // Fallback: index.json
+  try {
+    const r = await fetch(KOPPA_REGISTRY_JSON)
+    const registry = await r.json()
+    const pkg = registry.packages?.[name]
+    if (pkg) {
+      renderPackage({ ...pkg, name, latest_version: pkg.version, author_name: pkg.author }, 'json')
+      return
+    }
+  } catch(_) {}
+
+  document.getElementById('loading').style.display   = 'none'
+  document.getElementById('not-found').style.display = 'block'
+}
+
+// ── Clipboard helpers ──────────────────────────────────────────────────────────
+function copyInstall() {
+  navigator.clipboard.writeText('koppa pkg install ' + name)
+  const b = document.querySelector('.install-copy')
+  b.textContent = 'Copied!'
+  setTimeout(() => b.textContent = 'Copy', 1500)
+}
+function copyBadge() {
+  navigator.clipboard.writeText(document.getElementById('badge-md').textContent)
+  const b = document.querySelector('.badge-copy')
+  b.textContent = 'Copied!'
+  setTimeout(() => b.textContent = 'Copy Badge Markdown', 1500)
+}
+
+// ── Auth init ──────────────────────────────────────────────────────────────────
+async function init() {
+  if (db) {
+    const { data: { session } } = await db.auth.getSession()
+    if (session) {
+      currentUser = session.user
+      document.getElementById('nav-login').textContent = 'My Packages'
+      document.getElementById('nav-login').href = 'profile.html'
+    }
+  }
+  loadPackage()
+}
+init()
+</script>
+</body>
+</html>
