@@ -135,17 +135,18 @@
       "downloads": 1170
     },
     "koppa-osint": {
-      "version": "1.2.0",
-      "description": "OSINT toolkit â€” email harvest, social lookup, GitHub dork, Pastebin",
+      "version": "1.1.0",
+      "description": "OSINT toolkit — email intel, domain info, social lookup, breach check, Shodan query",
       "author": "KOPPA Team",
-      "url": "https://github.com/guea14012/koppa-osint",
+      "url": "https://github.com/guea14012/koppa-registry-",
       "tags": [
         "osint",
         "recon",
-        "email"
+        "email",
+        "domain"
       ],
       "license": "MIT",
-      "downloads": 4320
+      "downloads": 1845
     },
     "koppa-encode": {
       "version": "1.0.0",
@@ -701,30 +702,31 @@
     },
     "koppa-privesc": {
       "version": "1.0.0",
-      "description": "Linux/Windows privilege escalation checks â€” SUID, sudo, services",
+      "description": "Privilege escalation checks — SUID, sudo, PATH, cron, weak perms, kernel exploits",
       "author": "KOPPA Team",
-      "url": "https://github.com/guea14012/koppa-privesc",
+      "url": "https://github.com/guea14012/koppa-registry-",
       "tags": [
         "privesc",
-        "post-exploit",
         "linux",
-        "windows"
+        "windows",
+        "redteam"
       ],
       "license": "MIT",
-      "downloads": 3450
+      "downloads": 878
     },
     "koppa-lateral": {
       "version": "1.0.0",
-      "description": "Lateral movement helpers â€” pass-the-hash, WMI, PsExec, SMBexec",
+      "description": "Lateral movement — pass-the-hash, SMB spread, WMI exec, RDP, SSH pivot",
       "author": "KOPPA Team",
-      "url": "https://github.com/guea14012/koppa-lateral",
+      "url": "https://github.com/guea14012/koppa-registry-",
       "tags": [
         "lateral",
-        "post-exploit",
-        "windows"
+        "windows",
+        "smb",
+        "redteam"
       ],
       "license": "MIT",
-      "downloads": 1890
+      "downloads": 1897
     },
     "koppa-kerberos": {
       "version": "1.0.0",
@@ -2048,16 +2050,17 @@
     },
     "koppa-persistence": {
       "version": "1.0.0",
-      "description": "Persistence — crontab, registry, startup, service installer",
+      "description": "Persistence mechanisms — registry, cron, startup, scheduled tasks, service install",
       "author": "KOPPA Team",
-      "url": "https://github.com/guea14012/koppa-persistence",
+      "url": "https://github.com/guea14012/koppa-registry-",
       "tags": [
         "persistence",
-        "post-exploit",
+        "windows",
+        "linux",
         "redteam"
       ],
       "license": "MIT",
-      "downloads": 3200
+      "downloads": 2016
     },
     "koppa-exfil": {
       "version": "1.0.0",
@@ -2825,6 +2828,93 @@
       ],
       "license": "MIT",
       "downloads": 2340
+    },
+    "koppa-ssl-audit": {
+      "version": "1.0.0",
+      "description": "SSL/TLS audit — cert expiry, cipher suite, HSTS, hostname verify, protocol scan",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-registry-",
+      "tags": [
+        "ssl",
+        "tls",
+        "network",
+        "web",
+        "audit"
+      ],
+      "license": "MIT",
+      "downloads": 667
+    },
+    "koppa-forensics": {
+      "version": "1.0.0",
+      "description": "Forensics toolkit — EVTX parse, prefetch, MFT, browser history, registry artifacts",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-registry-",
+      "tags": [
+        "forensics",
+        "windows",
+        "blueteam",
+        "dfir"
+      ],
+      "license": "MIT",
+      "downloads": 2512
+    },
+    "koppa-cloud-enum": {
+      "version": "1.0.0",
+      "description": "Cloud enumeration — AWS S3 bucket scan, Azure AD, GCP IAM, public resource detect",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-registry-",
+      "tags": [
+        "cloud",
+        "aws",
+        "azure",
+        "gcp",
+        "osint"
+      ],
+      "license": "MIT",
+      "downloads": 1785
+    },
+    "koppa-api-fuzz": {
+      "version": "1.0.0",
+      "description": "REST API fuzzer — endpoint discovery, auth bypass, IDOR, mass assignment, schema extract",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-registry-",
+      "tags": [
+        "api",
+        "web",
+        "fuzzing",
+        "exploit"
+      ],
+      "license": "MIT",
+      "downloads": 1215
+    },
+    "koppa-ctf-tools": {
+      "version": "1.0.0",
+      "description": "CTF toolkit — cipher decode, stego, ROT, base encodings, format string, pwntools helper",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-registry-",
+      "tags": [
+        "ctf",
+        "crypto",
+        "forensics",
+        "pwn",
+        "utils"
+      ],
+      "license": "MIT",
+      "downloads": 2901
+    },
+    "koppa-network-pivot": {
+      "version": "1.0.0",
+      "description": "Network pivoting — SOCKS proxy, port forward, tunnel, dynamic port scan via pivot",
+      "author": "KOPPA Team",
+      "url": "https://github.com/guea14012/koppa-registry-",
+      "tags": [
+        "network",
+        "pivot",
+        "redteam",
+        "tunnel"
+      ],
+      "license": "MIT",
+      "downloads": 2430
     }
   }
 }
